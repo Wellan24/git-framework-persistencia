@@ -17,5 +17,5 @@ public interface DataProcessor{
     public void process(Data d);
     public void commit();
     public Object getProcesed();
-    public boolean isValdid(Data d);
+    public boolean isValid(Data d);
 }
