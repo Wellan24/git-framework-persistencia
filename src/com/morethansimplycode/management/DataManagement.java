@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class DataManagement {
     
-    public ArrayList<Data> recuperarDatos(String where){
+    public ArrayList<Data> recoveryData(String where){
         
         return null;
     }
