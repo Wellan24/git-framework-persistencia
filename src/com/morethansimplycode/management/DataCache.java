@@ -13,32 +13,37 @@ import java.util.HashMap;
  *
  * @author Oscar
  */
-public class DataCache {
+public final class DataCache {
 
-    private static HashMap<String, ArrayList<Data>> cache;
+    private HashMap<String, ArrayList<Data>> cache;
 
-    public static void initializeCache(int initialSize){
-        
-        if(cache == null)
-            cache = new HashMap(initialSize);
-    }
-    
-    public static void clearCache(){
-        
-        cache.clear();
-    }
-    
-    public static ArrayList<Data> getCacheData(String key) {
+    public void initializeCache(int initialSize) {
 
-        if(cache != null)
-            return cache.get(key);
-        else
-            return null;
+        cache = new HashMap(initialSize);
     }
 
-    static void putCacheData(String key, ArrayList<Data> data) {
+    public DataCache() {
 
         initializeCache(5);
+    }
+
+    public DataCache(int initialSize) {
+
+        initializeCache(initialSize);
+    }
+
+    public void clearCache() {
+
+        cache.clear();
+    }
+
+    public ArrayList<Data> getCacheData(String key) {
+
+        return cache.get(key);
+    }
+
+    void putCacheData(String key, ArrayList<Data> data) {
+
         cache.put(key, data);
     }
 }

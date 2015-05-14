@@ -5,11 +5,18 @@
  */
 package com.morethansimplycode.management;
 
+import com.morethansimplycode.data.Data;
+import java.util.ArrayList;
+
 /**
  *
  * @author Oscar
  */
 public interface DataListener {
-    
-    public void handleDataRecovery(String key, DataProcessor processor);
+
+    public Class<? extends Data> getClassforHandle();
+
+    public void handleDataRecoveryNotCached(ArrayList<Data> data, DataProcessor processor);
+
+    public void handleDataRecoveryCached(String key, DataProcessor processor);
 }
