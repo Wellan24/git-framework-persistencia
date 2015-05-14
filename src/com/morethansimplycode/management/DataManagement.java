@@ -56,7 +56,12 @@ public class DataManagement {
         }
     }
 
-    public ArrayList<Data> recuperarDatos(String where) {
+    /**
+     * Recover an Array of Data of the given class with the given where clausule
+     * @param where
+     * @return An ArrayList<Data> with the recovered Data 
+     */
+    public ArrayList<Data> recoverData(String where) {
 
         return null;
     }
@@ -68,7 +73,7 @@ public class DataManagement {
      * @param listener The listener of the method
      * @param where The where clausule
      */
-    public void recoveryDataAsync(DataListener listener) {
+    public void recoverDataAsync(DataListener listener) {
 
     }
 
@@ -79,7 +84,7 @@ public class DataManagement {
      * @param listener The listener of the method
      * @param where The where clausule
      */
-    public void recoveryDataAsync(DataListener listener, String where) {
+    public void recoverDataAsync(DataListener listener, String where) {
 
     }
 
@@ -91,7 +96,7 @@ public class DataManagement {
      * @param p The processor
      * @param where The where clausule
      */
-    public void recoveryDataAsync(DataListener listener, DataProcessor p, String where) {
+    public void recoverDataAsync(DataListener listener, DataProcessor p, String where) {
 
     }
 
@@ -105,7 +110,7 @@ public class DataManagement {
      * @param where The where clausule
      * @param cached True if cached with the table name or no
      */
-    public void recoveryDataAsync(DataListener listener, DataProcessor p, String where, boolean cached) {
+    public void recoverDataAsync(DataListener listener, DataProcessor p, String where, boolean cached) {
 
     }
 
@@ -118,7 +123,7 @@ public class DataManagement {
      * @param where The where clausule
      * @param key The key used to cache the data
      */
-    public void recoveryDataAsync(DataListener listener, DataProcessor p, String where, String key) {
+    public void recoverDataAsync(DataListener listener, DataProcessor p, String where, String key) {
 
     }
 
