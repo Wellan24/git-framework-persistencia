@@ -47,6 +47,12 @@ public class DataManagementUtil {
 
     }
     
+    
+    
+    
+    
+    
+    
     // Pasar esto a otra clase, o lo anterior
 //    public static boolean ejecutarSentenciaUpdate(String textoSentencia) {
 //
