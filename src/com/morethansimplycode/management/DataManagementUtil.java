@@ -6,307 +6,221 @@
 package com.morethansimplycode.management;
 
 import com.morethansimplycode.data.Data;
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- *
+ * The purpose of this class is to give a bunch of general methods to 
+ * Data persistence
  * @author Oscar
  */
 public class DataManagementUtil {
+    
+    // TODO Refactorizar esta clase
+public static boolean ejecutarSentenciaUpdate(Connection conection,String textoSentencia) {
 
-    private static DataManagement dataManagment;
-    // TODO Usar este listener para llamar a todo el Array de Listener
-    private static DataListener dataListener;
+        Statement sentenciaLocal;
+        ResultSet dev = null;
+        try {
+            
+            sentenciaLocal = conection.createStatement();
+            System.out.println(textoSentencia);
+            int result = sentenciaLocal.executeUpdate(textoSentencia);
 
-    public static DataManagement getDataManagment() {
-        return dataManagment;
-    }
-
-    public static void setDataManagment(DataManagement dataManagment) {
-        DataManagementUtil.dataManagment = dataManagment;
-    }
-
-    /**
-     * Recover an Array of Data of the given class with the given where clausule
-     *
-     * @param where
-     * @return An ArrayList<Data> with the recovered Data
-     */
-    public static ArrayList<Data> recoverData(String where) {
-
-        return dataManagment.recoverData(where);
+            return result == 1;
+        } catch(SQLException ex) {
+            Logger.getLogger(DataManagementUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 
     /**
-     * This method uses ArrayList<Data> in a separated Thread and then call all
-     * the DataListeners of the Class recovered or Data.class, using
-     * handleDataRecoveryNotCached
-     *
-     * @param listener The listener of the method
-     * @param where The where clausule
+     * @param textoSentencia
+     * @return Devuelve un ResultSet con los datos de la consulta o null si hay una excepción
      */
-    public static void recoveryDataAsync(String where) {
+    public synchronized static ResultSet ejecutarSentenciaQuery(Connection conection, String textoSentencia) {
 
-        dataManagment.recoverDataAsync(dataListener,  where);
+        Statement sentenciaLocal;
+        ResultSet dev = null;
+        try {
+            
+            sentenciaLocal = conection.createStatement();
+            System.out.println(textoSentencia);
+            dev = sentenciaLocal.executeQuery(textoSentencia);
+
+        } catch(SQLException ex) {
+            Logger.getLogger(DataManagementUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return dev;
     }
 
-    /**
-     * This method uses ArrayList<Data> in a separated Thread and then call all
-     * the DataListeners of the Class recovered or Data.class, using
-     * handleDataRecoveryNotCached
-     *
-     * @param listener The listener of the method
-     * @param p The processor
-     * @param where The where clausule
-     */
-    public static void recoveryDataAsync(DataProcessor p, String where) {
+    public static boolean insertarDato(Connection conection, Data d) {
 
-        dataManagment.recoverDataAsync(dataListener, p, where);
+        String[] claves = devuelveOrdenDeColumnas(d.getClass());
+
+        if(!comprobarExiste(conection, d)) {
+
+            StringBuilder textoSentencia = construyeSentenciaInsert(d, claves);
+            DataManagementUtil.ejecutarSentenciaUpdate(conection, textoSentencia.toString());
+            return comprobarExiste(conection, d);
+        }
+        return false;
     }
 
-    /**
-     * This method uses ArrayList<Data> in a separated Thread and then call all
-     * the DataListeners of the Class recovered or Data.class, using
-     * handleDataRecoveryCached if cached is true and
-     * handleDataRecoveryNotCached if cached is false
-     *
-     * @param listener The listener of the method
-     * @param p The processor
-     * @param where The where clausule
-     * @param cached True if cached with the table name or no
-     */
-    public static void recoveryDataAsync(DataProcessor p, String where, boolean cached) {
+    public static boolean comprobarExiste(Connection conection, Data d) {
+        String primaryKey = devuelveClave(d.getClass());
+        Statement sentenciaLocal;
+        try {
+            sentenciaLocal = conection.createStatement();
+            if(!primaryKey.contains(" ")) {
 
-        dataManagment.recoverDataAsync(dataListener, p, where, where);
+                ResultSet rs = sentenciaLocal.executeQuery("Select " + primaryKey + " from " + devuelveNombreTablaDato(d.getClass())
+                        + " where " + primaryKey + " = "
+                        + ((d.get(primaryKey) instanceof String) ? "'" + d.get(primaryKey) + "'" : d.get(primaryKey)));
+
+                return rs.next();
+
+            } else {
+                String[] key = primaryKey.split(" ");
+                ResultSet rs = sentenciaLocal.executeQuery("Select " + key[0] + ", " + key[1] + " from " + devuelveNombreTablaDato(d.getClass())
+                        + " where " + key[0] + " = "
+                        + ((d.get(key[0]) instanceof String) ? "'" + d.get(key[0]) + "'" : d.get(key[0]))
+                        + " AND " + key[1] + " = "
+                        + ((d.get(key[1]) instanceof String) ? "'" + d.get(key[1]) + "'" : d.get(key[1]))
+                );
+
+                return rs.next();
+            }
+        } catch(SQLException ex) {
+            Logger.getLogger(DataManagementUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 
-    /**
-     * This method uses ArrayList<Data> in a separated Thread and then call all
-     * the DataListeners of the Class recovered or Data.class, using
-     * handleDataRecoveryCached
-     *
-     * @param listener The listener of the method
-     * @param p The processor
-     * @param where The where clausule
-     * @param key The key used to cache the data
-     */
-    public void recoveryDataAsync(DataProcessor p, String where, String key) {
+    private static StringBuilder construyeSentenciaInsert(Data d, String[] claves) {
 
-        dataManagment.recoverDataAsync(dataListener, p, where, true);
+        StringBuilder textoSentencia = new StringBuilder("insert into ");
+        textoSentencia.append(devuelveNombreTablaDato(d.getClass()));
+        textoSentencia.append("(");
+        for(String clave :claves) {
+
+            textoSentencia.append(clave).append(",");
+        }
+        textoSentencia.replace(textoSentencia.length() - 1, textoSentencia.length(), ")");
+        textoSentencia.append(" VALUES(");
+        for(String clave :claves) {
+
+            Object rec = d.get(clave);
+            if(rec instanceof String || rec instanceof LocalDate) {
+
+                textoSentencia.append("'");
+                textoSentencia.append(rec.toString());
+                textoSentencia.append("'");
+            } else if(rec instanceof Integer) {
+
+                textoSentencia.append(rec);
+            } else if(rec instanceof Float) {
+
+                textoSentencia.append(rec);
+            } else {
+
+                textoSentencia.append(rec);
+            }
+            textoSentencia.append(" ,");
+        }
+        textoSentencia.replace(textoSentencia.length() - 2, textoSentencia.length(), ");");
+
+        return textoSentencia;
     }
 
-    // Pasar esto a otra clase, o lo anterior
-//    public static boolean ejecutarSentenciaUpdate(String textoSentencia) {
-//
-//        Statement sentenciaLocal;
-//        ResultSet dev = null;
-//        try {
-//            
-//            sentenciaLocal = DataManagementUtil.conexion.createStatement();
-//            System.out.println(textoSentencia);
-//            int result = sentenciaLocal.executeUpdate(textoSentencia);
-//
-//            return result == 1;
-//        } catch(SQLException ex) {
-//            Logger.getLogger(DataManagementUtil.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        return false;
-//    }
-//
-//    /**
-//     * @param textoSentencia
-//     * @return Devuelve un ResultSet con los datos de la consulta o null si hay una excepción
-//     */
-//    public synchronized static ResultSet ejecutarSentenciaQuery(String textoSentencia) {
-//
-//        Statement sentenciaLocal;
-//        ResultSet dev = null;
-//        try {
-//            
-//            sentenciaLocal = DataManagementUtil.conexion.createStatement();
-//            System.out.println(textoSentencia);
-//            dev = sentenciaLocal.executeQuery(textoSentencia);
-//
-//        } catch(SQLException ex) {
-//            Logger.getLogger(DataManagementUtil.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        return dev;
-//    }
-//
-//    public static void cerrarConexion() {
-//
-//        try {
-//
-//            DataManagementUtil.conexion.commit();
-//            DataManagementUtil.conexion.close();
-//        } catch(SQLException ex) {
-//            Logger.getLogger(DataManagementUtil.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
-//
-//    public static boolean insertarDato(Data d) {
-//
-//        String[] claves = devuelveOrdenDeColumnas(d.getClass());
-//
-//        if(!comprobarExiste(d)) {
-//
-//            StringBuilder textoSentencia = construyeSentenciaInsert(d, claves);
-//            DataManagementUtil.ejecutarSentenciaUpdate(textoSentencia.toString());
-//            return comprobarExiste(d);
-//        }
-//        return false;
-//    }
-//
-//    public static boolean comprobarExiste(Data d) {
-//        String primaryKey = devuelveClave(d.getClass());
-//        Statement sentenciaLocal;
-//        try {
-//            sentenciaLocal = DataManagementUtil.conexion.createStatement();
-//            if(!primaryKey.contains(" ")) {
-//
-//                ResultSet rs = sentenciaLocal.executeQuery("Select " + primaryKey + " from " + devuelveNombreTablaDato(d.getClass())
-//                        + " where " + primaryKey + " = "
-//                        + ((d.get(primaryKey) instanceof String) ? "'" + d.get(primaryKey) + "'" : d.get(primaryKey)));
-//
-//                return rs.next();
-//
-//            } else {
-//                String[] key = primaryKey.split(" ");
-//                ResultSet rs = sentenciaLocal.executeQuery("Select " + key[0] + ", " + key[1] + " from " + devuelveNombreTablaDato(d.getClass())
-//                        + " where " + key[0] + " = "
-//                        + ((d.get(key[0]) instanceof String) ? "'" + d.get(key[0]) + "'" : d.get(key[0]))
-//                        + " AND " + key[1] + " = "
-//                        + ((d.get(key[1]) instanceof String) ? "'" + d.get(key[1]) + "'" : d.get(key[1]))
-//                );
-//
-//                return rs.next();
-//            }
-//        } catch(SQLException ex) {
-//            Logger.getLogger(DataManagementUtil.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        return false;
-//    }
-//
-//    private static StringBuilder construyeSentenciaInsert(Data d, String[] claves) {
-//
-//        StringBuilder textoSentencia = new StringBuilder("insert into ");
-//        textoSentencia.append(devuelveNombreTablaDato(d.getClass()));
-//        textoSentencia.append("(");
-//        for(String clave :claves) {
-//
-//            textoSentencia.append(clave).append(",");
-//        }
-//        textoSentencia.replace(textoSentencia.length() - 1, textoSentencia.length(), ")");
-//        textoSentencia.append(" VALUES(");
-//        for(String clave :claves) {
-//
-//            Object rec = d.get(clave);
-//            if(rec instanceof String || rec instanceof LocalDate) {
-//
-//                textoSentencia.append("'");
-//                textoSentencia.append(rec.toString());
-//                textoSentencia.append("'");
-//            } else if(rec instanceof Integer) {
-//
-//                textoSentencia.append(rec);
-//            } else if(rec instanceof Float) {
-//
-//                textoSentencia.append(rec);
-//            } else {
-//
-//                textoSentencia.append(rec);
-//            }
-//            textoSentencia.append(" ,");
-//        }
-//        textoSentencia.replace(textoSentencia.length() - 2, textoSentencia.length(), ");");
-//
-//        return textoSentencia;
-//    }
-//
-//    public static boolean updateDato(Data d) {
-//
-//        if(comprobarExiste(d)) {
-//
-//            return ejecutarSentenciaUpdate(construyeSentenciaUpdate(d).toString());
-//        }
-//
-//        return false;
-//    }
-//
-//    public static StringBuilder construyeSentenciaUpdate(Data d) {
-//
-//        String[] claves = devuelveOrdenDeColumnas(d.getClass());
-//        StringBuilder textoSentencia = new StringBuilder("update ");
-//        textoSentencia.append(devuelveNombreTablaDato(d.getClass()));
-//        textoSentencia.append(" set ");
-//        for(int i = 1;i < claves.length;i++) {
-//
-//            Object rec = d.get(claves[i]);
-//            textoSentencia.append(claves[i]).append("=");
-//
-//            if(rec instanceof String || rec instanceof LocalDate) {
-//
-//                textoSentencia.append("'");
-//                textoSentencia.append(rec.toString());
-//                textoSentencia.append("'");
-//            } else if(rec instanceof Integer) {
-//
-//                textoSentencia.append(rec);
-//            } else if(rec instanceof Float) {
-//
-//                textoSentencia.append(rec);
-//            } else {
-//
-//                textoSentencia.append(rec);
-//            }
-//            textoSentencia.append(" ,");
-//        }
-//
-//        textoSentencia.replace(textoSentencia.length() - 2, textoSentencia.length(), " where ");
-//        textoSentencia.append(claves[0]).append(" = ").append(d.get(claves[0]));
-//        return textoSentencia;
-//    }
-//
-//    public static String construyeSentenciaSelect(String[] claves, String nombreTabla) {
-//
-//        StringBuilder dev = new StringBuilder("Select ");
-//
-//        for(String clave :claves) {
-//
-//            dev.append(clave).append(",");
-//        }
-//
-//        dev.replace(dev.length() - 1, dev.length(), " from " + nombreTabla);
-//
-//        return dev.toString();
-//    }
-//
-//    public static String construyeSentenciaSelect(String[] claves, String nombreTabla, String where) {
-//
-//        StringBuilder dev = new StringBuilder("Select ");
-//
-//        for(String clave :claves) {
-//
-//            dev.append(clave).append(",");
-//        }
-//
-//        dev.replace(dev.length() - 1, dev.length(), " from ");
-//        dev.append(nombreTabla).append(" ").append(where);
-//
-//        return dev.toString();
-//    }
-//
-//    private static String[] devuelveOrdenDeColumnas(Class<? extends Data> d) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-//
-//    private static String devuelveNombreTablaDato(Class<? extends Data> d) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-//
-//    private static String devuelveClave(Class<? extends Data> d) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
-//}
+    public static boolean updateDato(Connection conection,Data d) {
+
+        if(comprobarExiste(conection, d)) {
+
+            return ejecutarSentenciaUpdate(conection, construyeSentenciaUpdate(d).toString());
+        }
+
+        return false;
+    }
+
+    public static StringBuilder construyeSentenciaUpdate(Data d) {
+
+        String[] claves = devuelveOrdenDeColumnas(d.getClass());
+        StringBuilder textoSentencia = new StringBuilder("update ");
+        textoSentencia.append(devuelveNombreTablaDato(d.getClass()));
+        textoSentencia.append(" set ");
+        for(int i = 1;i < claves.length;i++) {
+
+            Object rec = d.get(claves[i]);
+            textoSentencia.append(claves[i]).append("=");
+
+            if(rec instanceof String || rec instanceof LocalDate) {
+
+                textoSentencia.append("'");
+                textoSentencia.append(rec.toString());
+                textoSentencia.append("'");
+            } else if(rec instanceof Integer) {
+
+                textoSentencia.append(rec);
+            } else if(rec instanceof Float) {
+
+                textoSentencia.append(rec);
+            } else {
+
+                textoSentencia.append(rec);
+            }
+            textoSentencia.append(" ,");
+        }
+
+        textoSentencia.replace(textoSentencia.length() - 2, textoSentencia.length(), " where ");
+        textoSentencia.append(claves[0]).append(" = ").append(d.get(claves[0]));
+        return textoSentencia;
+    }
+
+    public static String construyeSentenciaSelect(String[] claves, String nombreTabla) {
+
+        StringBuilder dev = new StringBuilder("Select ");
+
+        for(String clave :claves) {
+
+            dev.append(clave).append(",");
+        }
+
+        dev.replace(dev.length() - 1, dev.length(), " from " + nombreTabla);
+
+        return dev.toString();
+    }
+
+    public static String construyeSentenciaSelect(String[] claves, String nombreTabla, String where) {
+
+        StringBuilder dev = new StringBuilder("Select ");
+
+        for(String clave :claves) {
+
+            dev.append(clave).append(",");
+        }
+
+        dev.replace(dev.length() - 1, dev.length(), " from ");
+        dev.append(nombreTabla).append(" ").append(where);
+
+        return dev.toString();
+    }
+
+    private static String[] devuelveOrdenDeColumnas(Class<? extends Data> d) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private static String devuelveNombreTablaDato(Class<? extends Data> d) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private static String devuelveClave(Class<? extends Data> d) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

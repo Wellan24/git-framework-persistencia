@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- *
+ * This class Manage a cache of Data.
  * @author Oscar
  */
 public final class DataCache {

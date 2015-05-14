@@ -9,7 +9,8 @@ import com.morethansimplycode.data.Data;
 
 
 /**
- *
+ * This class is used in the Recover Data Process to process the data while 
+ * recovering it.
  * @author Oscar
  */
 public interface DataProcessor{
