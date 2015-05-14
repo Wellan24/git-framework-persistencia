@@ -58,8 +58,9 @@ public class DataManagement {
 
     /**
      * Recover an Array of Data of the given class with the given where clausule
+     *
      * @param where
-     * @return An ArrayList<Data> with the recovered Data 
+     * @return An ArrayList<Data> with the recovered Data
      */
     public ArrayList<Data> recoverData(String where) {
 

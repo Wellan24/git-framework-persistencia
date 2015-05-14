@@ -9,8 +9,9 @@ import com.morethansimplycode.data.Data;
 import java.util.ArrayList;
 
 /**
- * The purpose of this class is to wrapp a DataManagement object to give
- * a Singleton like class using it.
+ * The purpose of this class is to wrapp a DataManagement object to give a
+ * Singleton like class using it.
+ *
  * @author Oscar
  */
 public class SingletonDataManagement {
@@ -48,7 +49,7 @@ public class SingletonDataManagement {
      */
     public static void recoveryDataAsync(String where) {
 
-        dataManagment.recoverDataAsync(dataListener,  where);
+        dataManagment.recoverDataAsync(dataListener, where);
     }
 
     /**

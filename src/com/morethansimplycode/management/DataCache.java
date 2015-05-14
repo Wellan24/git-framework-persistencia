@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 /**
  * This class Manage a cache of Data.
+ *
  * @author Oscar
  */
 public final class DataCache {
@@ -29,9 +30,11 @@ public final class DataCache {
 
         initializeCache(5);
     }
+
     /**
      * Construct the cache with initialSize
-     * @param initialSize 
+     *
+     * @param initialSize
      */
     public DataCache(int initialSize) {
 
@@ -48,8 +51,9 @@ public final class DataCache {
 
     /**
      * Returns the cached data in the given key.
+     *
      * @param key The key where the data is saved
-     * @return 
+     * @return
      */
     public ArrayList<Data> getCachedData(String key) {
 
@@ -58,6 +62,7 @@ public final class DataCache {
 
     /**
      * Save the data in the given key.
+     *
      * @param key The key where the data will be saved
      */
     void putCacheData(String key, ArrayList<Data> data) {
