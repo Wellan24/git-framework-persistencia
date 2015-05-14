@@ -146,6 +146,6 @@ public class DataManagement {
      */
     public ArrayList<Data> getDataFromCache(String key) {
 
-        return dataCache.getCacheData(key);
+        return dataCache.getCachedData(key);
     }
 }

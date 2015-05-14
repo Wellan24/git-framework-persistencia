@@ -22,26 +22,44 @@ public final class DataCache {
         cache = new HashMap(initialSize);
     }
 
+    /**
+     * Construct the cache with a default size of 5
+     */
     public DataCache() {
 
         initializeCache(5);
     }
-
+    /**
+     * Construct the cache with initialSize
+     * @param initialSize 
+     */
     public DataCache(int initialSize) {
 
         initializeCache(initialSize);
     }
 
+    /**
+     * Clear the caché
+     */
     public void clearCache() {
 
         cache.clear();
     }
 
-    public ArrayList<Data> getCacheData(String key) {
+    /**
+     * Returns the cached data in the given key.
+     * @param key The key where the data is saved
+     * @return 
+     */
+    public ArrayList<Data> getCachedData(String key) {
 
         return cache.get(key);
     }
 
+    /**
+     * Save the data in the given key.
+     * @param key The key where the data will be saved
+     */
     void putCacheData(String key, ArrayList<Data> data) {
 
         cache.put(key, data);
