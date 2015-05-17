@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,10 +23,17 @@ import java.util.logging.Logger;
  */
 public class DataManagementUtil {
 
-    // TODO Refactorizar esta clase
-    public static boolean executeNonQuery(Connection conection, String query) {
+    // TODO Transfomar esta clase en una que cambie en función de la 
+    // base de datos y que sea una interfaz que se implemente
+    /**
+     * Executes a query without result.
+     * @param connection
+     * @param query
+     * @return True if the query is success or false if not
+     */
+    public static boolean executeNonQuery(Connection connection, String query) {
 
-        try (Statement statement = conection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
 
             return statement.executeUpdate(query) == 1;
 
@@ -41,9 +49,9 @@ public class DataManagementUtil {
      * @return Devuelve un ResultSet con los datos de la consulta o null si hay
      * una excepción
      */
-    public synchronized static ResultSet executeQuery(Connection conection, String query) {
+    public synchronized static ResultSet executeQuery(Connection connection, String query) {
 
-        try (Statement statement = conection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
 
             return statement.executeQuery(query);
 
@@ -54,18 +62,34 @@ public class DataManagementUtil {
         return null;
     }
 
-    public static boolean insertarDato(Connection conection, Data d) {
+    /**
+     * Insert a Data object to the DataBase. This uses the DataDBInfo interface,
+     * or the name of the class and all its keys.
+     *
+     * @param connection
+     * @param d
+     * @return True if the insert is successfull or false otherwise.
+     */
+    public static boolean insertData(Connection connection, Data d) {
 
-        StringBuilder text = construyeSentenciaInsert(d, devuelveOrdenDeColumnas(d.getClass()));
-        DataManagementUtil.executeNonQuery(conection, text.toString());
-        return comprobarExiste(conection, d);
+        StringBuilder text = createInsertQuery(d, devuelveOrdenDeColumnas(d.getClass()));
+        DataManagementUtil.executeNonQuery(connection, text.toString());
+        return existsByPrimaryKey(connection, d);
     }
 
-    public static boolean comprobarExiste(Connection conection, Data d) {
-        
-        try (Statement statement = conection.createStatement()) {
+    /**
+     * This method check if the Data exists in the data base, comparing it with
+     * the PrimaryKeys
+     *
+     * @param connection
+     * @param d
+     * @return True if it exists, false if not
+     */
+    public static boolean existsByPrimaryKey(Connection connection, Data d) {
 
-            createSelectByPrimaryKey("true", d);
+        try (Statement statement = connection.createStatement()) {
+
+            createSelectQueryByPrimaryKey("true", d);
             ResultSet rs = statement.executeQuery("");
             return rs.next();
 
@@ -75,37 +99,116 @@ public class DataManagementUtil {
         return false;
     }
 
-    private static StringBuilder createSelectByPrimaryKey(String columns, Data d) {
+    /**
+     * This method check if the Data exists in the data base, comparing it 
+     * using all the keys.
+     *
+     * @param connection
+     * @param d
+     * @return True if the Data exists, false if not
+     */
+    public static boolean existsByAllColumns(Connection connection, Data d) {
         
-        String[] primaryKeys = devuelveClave(d.getClass());
-        
+        Set<String> set = d.keySet();  
+        return existsByColumns(connection, set.toArray(new String[set.size()]), d);
+    }
+    
+    /**
+     * This method check if the Data exists in the data base, comparing it 
+     * using the given keys.
+     *
+     * @param connection
+     * @param d
+     * @param columns 
+     * @return True if the Data exists, false if not
+     */
+    public static boolean existsByColumns(Connection connection, String[] columns, Data d) {
+
+        try (Statement statement = connection.createStatement()) {
+
+            Set<String> set = d.keySet();            
+            ResultSet rs = statement.executeQuery(createSelectQueryByColumns("true", columns, d).toString());
+            return rs.next();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DataManagementUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    /**
+     * Creates a Select Query with this format: "Select ${selectColumns} from ${table} where whereColumns[i] = ${columnValue} [, ...]
+     * @param selectColumns
+     * @param whereColumns
+     * @param d
+     * @return A String builder with the text of the query.
+     */
+    private static StringBuilder createSelectQueryByColumns(String selectColumns, String[] whereColumns, Data d) {
+
         StringBuilder text = new StringBuilder("Select ");
-        text.append(columns).append(" from ");        
+        text.append(selectColumns).append(" from ");
         text.append(devuelveNombreTablaDato(d.getClass())).append(" where ");
-        
-        for (int i = 0; i < primaryKeys.length; i++) {
-            
-            String primaryKey = primaryKeys[i];
+
+        for (int i = 0; i < whereColumns.length; i++) {
+
+            String primaryKey = whereColumns[i];
             Object value = d.get(primaryKey);
-            
+
             if (value instanceof String)
                 text.append(primaryKey).append(" = '").append(value).append("'");
             else
                 text.append(primaryKey).append(" = ").append(value);
-            
-            if(i != primaryKeys.length-1)
+
+            if (i != whereColumns.length - 1)
                 text.append(",");
         }
-        
+
         return text;
     }
     
-    private static StringBuilder createSelectByPrimaryKey(String[] columns, Data d) {
-        
-        return createSelectByPrimaryKey(String.join(",", columns), d);
+    /**
+     * Creates a Select Query with this format: "Select String.join(",", ${selectColumns}) from ${table} where whereColumns[i] = ${columnValue} [, ...]
+     * @param selectColumns
+     * @param whereColumns
+     * @param d
+     * @return A String builder with the text of the query.
+     */
+    private static StringBuilder createSelectQueryByColumns(String[] selectColumns, String[] whereColumns, Data d) {
+
+        return createSelectQueryByColumns(String.join(",", selectColumns), whereColumns, d);
     }
 
-    private static StringBuilder construyeSentenciaInsert(Data d, String[] claves) {
+    private static StringBuilder createSelectQueryByPrimaryKey(String columns, Data d) {
+
+        String[] primaryKeys = devuelveClave(d.getClass());
+
+        StringBuilder text = new StringBuilder("Select ");
+        text.append(columns).append(" from ");
+        text.append(devuelveNombreTablaDato(d.getClass())).append(" where ");
+
+        for (int i = 0; i < primaryKeys.length; i++) {
+
+            String primaryKey = primaryKeys[i];
+            Object value = d.get(primaryKey);
+
+            if (value instanceof String)
+                text.append(primaryKey).append(" = '").append(value).append("'");
+            else
+                text.append(primaryKey).append(" = ").append(value);
+
+            if (i != primaryKeys.length - 1)
+                text.append(",");
+        }
+
+        return text;
+    }
+
+    private static StringBuilder createSelectQueryByPrimaryKey(String[] columns, Data d) {
+
+        return createSelectQueryByPrimaryKey(String.join(",", columns), d);
+    }
+
+    private static StringBuilder createInsertQuery(Data d, String[] claves) {
 
         StringBuilder textoSentencia = new StringBuilder("insert into ");
         textoSentencia.append(devuelveNombreTablaDato(d.getClass()));
@@ -141,11 +244,11 @@ public class DataManagementUtil {
         return textoSentencia;
     }
 
-    public static boolean updateDato(Connection conection, Data d) {
+    public static boolean updateDato(Connection connection, Data d) {
 
-        if (comprobarExiste(conection, d)) {
+        if (existsByPrimaryKey(connection, d)) {
 
-            return executeNonQuery(conection, construyeSentenciaUpdate(d).toString());
+            return executeNonQuery(connection, construyeSentenciaUpdate(d).toString());
         }
 
         return false;
