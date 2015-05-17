@@ -23,20 +23,16 @@ import java.util.logging.Logger;
 public class DataManagementUtil {
 
     // TODO Refactorizar esta clase
-    public static boolean ejecutarSentenciaUpdate(Connection conection, String textoSentencia) {
+    public static boolean executeNonQuery(Connection conection, String query) {
 
-        Statement sentenciaLocal;
-        ResultSet dev = null;
-        try {
+        try (Statement statement = conection.createStatement()) {
 
-            sentenciaLocal = conection.createStatement();
-            System.out.println(textoSentencia);
-            int result = sentenciaLocal.executeUpdate(textoSentencia);
+            return statement.executeUpdate(query) == 1;
 
-            return result == 1;
         } catch (SQLException ex) {
             Logger.getLogger(DataManagementUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
+
         return false;
     }
 
@@ -45,64 +41,68 @@ public class DataManagementUtil {
      * @return Devuelve un ResultSet con los datos de la consulta o null si hay
      * una excepción
      */
-    public synchronized static ResultSet ejecutarSentenciaQuery(Connection conection, String textoSentencia) {
+    public synchronized static ResultSet executeQuery(Connection conection, String query) {
 
-        Statement sentenciaLocal;
-        ResultSet dev = null;
-        try {
+        try (Statement statement = conection.createStatement()) {
 
-            sentenciaLocal = conection.createStatement();
-            System.out.println(textoSentencia);
-            dev = sentenciaLocal.executeQuery(textoSentencia);
+            return statement.executeQuery(query);
 
         } catch (SQLException ex) {
             Logger.getLogger(DataManagementUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        return dev;
+        return null;
     }
 
     public static boolean insertarDato(Connection conection, Data d) {
 
-        String[] claves = devuelveOrdenDeColumnas(d.getClass());
-
-        if (!comprobarExiste(conection, d)) {
-
-            StringBuilder textoSentencia = construyeSentenciaInsert(d, claves);
-            DataManagementUtil.ejecutarSentenciaUpdate(conection, textoSentencia.toString());
-            return comprobarExiste(conection, d);
-        }
-        return false;
+        StringBuilder text = construyeSentenciaInsert(d, devuelveOrdenDeColumnas(d.getClass()));
+        DataManagementUtil.executeNonQuery(conection, text.toString());
+        return comprobarExiste(conection, d);
     }
 
     public static boolean comprobarExiste(Connection conection, Data d) {
-        String primaryKey = devuelveClave(d.getClass());
-        Statement sentenciaLocal;
-        try {
-            sentenciaLocal = conection.createStatement();
-            if (!primaryKey.contains(" ")) {
+        
+        try (Statement statement = conection.createStatement()) {
 
-                ResultSet rs = sentenciaLocal.executeQuery("Select " + primaryKey + " from " + devuelveNombreTablaDato(d.getClass())
-                        + " where " + primaryKey + " = "
-                        + ((d.get(primaryKey) instanceof String) ? "'" + d.get(primaryKey) + "'" : d.get(primaryKey)));
+            createSelectByPrimaryKey("true", d);
+            ResultSet rs = statement.executeQuery("");
+            return rs.next();
 
-                return rs.next();
-
-            } else {
-                String[] key = primaryKey.split(" ");
-                ResultSet rs = sentenciaLocal.executeQuery("Select " + key[0] + ", " + key[1] + " from " + devuelveNombreTablaDato(d.getClass())
-                        + " where " + key[0] + " = "
-                        + ((d.get(key[0]) instanceof String) ? "'" + d.get(key[0]) + "'" : d.get(key[0]))
-                        + " AND " + key[1] + " = "
-                        + ((d.get(key[1]) instanceof String) ? "'" + d.get(key[1]) + "'" : d.get(key[1]))
-                );
-
-                return rs.next();
-            }
         } catch (SQLException ex) {
             Logger.getLogger(DataManagementUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+
+    private static StringBuilder createSelectByPrimaryKey(String columns, Data d) {
+        
+        String[] primaryKeys = devuelveClave(d.getClass());
+        
+        StringBuilder text = new StringBuilder("Select ");
+        text.append(columns).append(" from ");        
+        text.append(devuelveNombreTablaDato(d.getClass())).append(" where ");
+        
+        for (int i = 0; i < primaryKeys.length; i++) {
+            
+            String primaryKey = primaryKeys[i];
+            Object value = d.get(primaryKey);
+            
+            if (value instanceof String)
+                text.append(primaryKey).append(" = '").append(value).append("'");
+            else
+                text.append(primaryKey).append(" = ").append(value);
+            
+            if(i != primaryKeys.length-1)
+                text.append(",");
+        }
+        
+        return text;
+    }
+    
+    private static StringBuilder createSelectByPrimaryKey(String[] columns, Data d) {
+        
+        return createSelectByPrimaryKey(String.join(",", columns), d);
     }
 
     private static StringBuilder construyeSentenciaInsert(Data d, String[] claves) {
@@ -145,7 +145,7 @@ public class DataManagementUtil {
 
         if (comprobarExiste(conection, d)) {
 
-            return ejecutarSentenciaUpdate(conection, construyeSentenciaUpdate(d).toString());
+            return executeNonQuery(conection, construyeSentenciaUpdate(d).toString());
         }
 
         return false;
@@ -222,7 +222,7 @@ public class DataManagementUtil {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private static String devuelveClave(Class<? extends Data> d) {
+    private static String[] devuelveClave(Class<? extends Data> d) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
