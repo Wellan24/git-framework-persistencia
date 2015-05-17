@@ -27,6 +27,7 @@ public class DataManagementUtil {
     // base de datos y que sea una interfaz que se implemente
     /**
      * Executes a query without result.
+     *
      * @param connection
      * @param query
      * @return True if the query is success or false if not
@@ -100,33 +101,33 @@ public class DataManagementUtil {
     }
 
     /**
-     * This method check if the Data exists in the data base, comparing it 
-     * using all the keys.
+     * This method check if the Data exists in the data base, comparing it using
+     * all the keys.
      *
      * @param connection
      * @param d
      * @return True if the Data exists, false if not
      */
     public static boolean existsByAllColumns(Connection connection, Data d) {
-        
-        Set<String> set = d.keySet();  
+
+        Set<String> set = d.keySet();
         return existsByColumns(connection, set.toArray(new String[set.size()]), d);
     }
-    
+
     /**
-     * This method check if the Data exists in the data base, comparing it 
-     * using the given keys.
+     * This method check if the Data exists in the data base, comparing it using
+     * the given keys.
      *
      * @param connection
      * @param d
-     * @param columns 
+     * @param columns
      * @return True if the Data exists, false if not
      */
     public static boolean existsByColumns(Connection connection, String[] columns, Data d) {
 
         try (Statement statement = connection.createStatement()) {
 
-            Set<String> set = d.keySet();            
+            Set<String> set = d.keySet();
             ResultSet rs = statement.executeQuery(createSelectQueryByColumns("true", columns, d).toString());
             return rs.next();
 
@@ -137,7 +138,9 @@ public class DataManagementUtil {
     }
 
     /**
-     * Creates a Select Query with this format: "Select ${selectColumns} from ${table} where whereColumns[i] = ${columnValue} [, ...]
+     * Creates a Select Query with this format: "Select ${selectColumns} from
+     * ${table} where whereColumns[i] = ${columnValue} [, ...]
+     *
      * @param selectColumns
      * @param whereColumns
      * @param d
@@ -165,9 +168,12 @@ public class DataManagementUtil {
 
         return text;
     }
-    
+
     /**
-     * Creates a Select Query with this format: "Select String.join(",", ${selectColumns}) from ${table} where whereColumns[i] = ${columnValue} [, ...]
+     * Creates a Select Query with this format: "Select String.join(",",
+     * ${selectColumns}) from ${table} where whereColumns[i] = ${columnValue} [,
+     * ...]
+     *
      * @param selectColumns
      * @param whereColumns
      * @param d
@@ -178,6 +184,15 @@ public class DataManagementUtil {
         return createSelectQueryByColumns(String.join(",", selectColumns), whereColumns, d);
     }
 
+    /**
+     * Creates a Select Query with this format: "Select  ${columns} from ${table} where primaryKey[i] = ${columnValue} [,
+     * ...]
+     *
+     * @param selectColumns
+     * @param whereColumns
+     * @param d
+     * @return A String builder with the text of the query.
+     */
     private static StringBuilder createSelectQueryByPrimaryKey(String columns, Data d) {
 
         String[] primaryKeys = devuelveClave(d.getClass());
@@ -203,11 +218,27 @@ public class DataManagementUtil {
         return text;
     }
 
+    /**
+     * Creates a Select Query with this format: "Select  String.join(",",${columns})
+     * from ${table} where primaryKey[i] = ${columnValue} [,
+     * ...]
+     *
+     * @param selectColumns
+     * @param whereColumns
+     * @param d
+     * @return A String builder with the text of the query.
+     */
     private static StringBuilder createSelectQueryByPrimaryKey(String[] columns, Data d) {
 
         return createSelectQueryByPrimaryKey(String.join(",", columns), d);
     }
 
+    /**
+     * Creates a Insert Query.
+     * @param d
+     * @param claves
+     * @return An StringBuilder with the text of the Query
+     */
     private static StringBuilder createInsertQuery(Data d, String[] claves) {
 
         StringBuilder textoSentencia = new StringBuilder("insert into ");
