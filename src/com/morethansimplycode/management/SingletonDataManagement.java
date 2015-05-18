@@ -7,6 +7,8 @@ package com.morethansimplycode.management;
 
 import com.morethansimplycode.data.Data;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * The purpose of this class is to wrapp a DataManagement object to give a
@@ -17,8 +19,9 @@ import java.util.ArrayList;
 public class SingletonDataManagement {
 
     private static DataManagement dataManagment;
+
     // TODO Usar este listener para llamar a todo el Array de Listener
-    private static DataListener dataListener;
+    private static DataListenerImpl dataListener;
 
     public static DataManagement getDataManagment() {
         return dataManagment;
@@ -26,6 +29,19 @@ public class SingletonDataManagement {
 
     public static void setDataManagment(DataManagement dataManagment) {
         SingletonDataManagement.dataManagment = dataManagment;
+        SingletonDataManagement.dataListener = new DataListenerImpl();
+    }
+
+    public static void addDataListener(DataListener dataListener) {
+        SingletonDataManagement.dataListener.addDataListener(dataListener);
+    }
+
+    public static void addDataListeners(DataListener[] dataListener) {
+        SingletonDataManagement.dataListener.addDataListeners(dataListener);
+    }
+
+    public static void addDataListeners(List<DataListener> dataListener) {
+        SingletonDataManagement.dataListener.addDataListeners(dataListener);
     }
 
     /**
@@ -99,4 +115,41 @@ public class SingletonDataManagement {
 
     // Pasar esto a otra clase, o lo anterior
 //    
+}
+
+class DataListenerImpl implements DataListener {
+
+    private final ArrayList<DataListener> userDataListeners;
+
+    public DataListenerImpl() {
+        userDataListeners = new ArrayList<>();
+    }
+
+    @Override
+    public Class<? extends Data> getClassforHandle() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void handleDataRecoveryNotCached(ArrayList<Data> data, DataProcessor processor) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void handleDataRecoveryCached(String key, DataProcessor processor) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void addDataListener(DataListener dataListener) {
+        userDataListeners.add(dataListener);
+    }
+
+    public void addDataListeners(DataListener[] dataListener) {
+        userDataListeners.addAll(Arrays.asList(dataListener));
+    }
+
+    public void addDataListeners(List<DataListener> dataListener) {
+        userDataListeners.addAll(dataListener);
+    }
+    
 }
