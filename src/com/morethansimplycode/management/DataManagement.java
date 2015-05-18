@@ -23,33 +23,38 @@ public class DataManagement {
     /**
      * The Connection used to connect to the required DataBase.
      */
-    private Connection conection;
+    private Connection connection;
 
     /**
      * The DataCache object that represents the cache.
      */
     private DataCache dataCache;
+    
+    /**
+     * The DataCache object that represents the cache.
+     */
+    private DataManagementDatabase dataManagementDatabase;
 
     /**
      * A contructor using a Connection
      *
-     * @param conection
+     * @param connection
      */
-    public DataManagement(Connection conection) {
-        this.conection = conection;
+    public DataManagement(Connection connection) {
+        this.connection = connection;
     }
 
     /**
      * A contructor using a Connection
      *
-     * @param conection
+     * @param connection
      */
     public DataManagement(String className, String url, String user, String password) {
 
         try {
 
             Class.forName(className);
-            this.conection = DriverManager.getConnection(url, user, password);
+            this.connection = DriverManager.getConnection(url, user, password);
 
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(DataManagement.class.getName()).log(Level.SEVERE, null, ex);

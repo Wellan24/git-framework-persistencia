@@ -14,4 +14,5 @@ public @interface DataDBInfo {
     String tableName();
     String[] primaryKey();
     String[] fields();
+    String[] autoNumKey() default {};
 }
