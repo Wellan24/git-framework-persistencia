@@ -112,9 +112,7 @@ public class SingletonDataManagement {
 
         dataManagment.recoverDataAsync(dataListener, p, where, true);
     }
-
-    // Pasar esto a otra clase, o lo anterior
-//    
+    
 }
 
 class DataListenerImpl implements DataListener {
