@@ -5,14 +5,24 @@
  */
 package com.morethansimplycode.data;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  *
  * @author Oscar
  */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
 public @interface DataDBInfo {
-    
-    String tableName();
-    String[] primaryKey();
-    String[] fields();
-    String[] autoNumKey() default {};
+
+    String tableName() default "NONE";
+
+    String[] primaryKey() default {};
+
+    String[] columns() default {};
+
+    String[] autoNumKeys() default {};
 }

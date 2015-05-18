@@ -48,7 +48,7 @@ public class SingletonDataManagement {
      * Recover an Array of Data of the given class with the given where clausule
      *
      * @param where
-     * @return An ArrayList<Data> with the recovered Data
+     * @return An ArrayList&lt;Data&gt; with the recovered Data
      */
     public static ArrayList<Data> recoverData(String where) {
 
@@ -56,11 +56,10 @@ public class SingletonDataManagement {
     }
 
     /**
-     * This method uses ArrayList<Data> in a separated Thread and then call all
+     * This method uses ArrayList&lt;Data&gt; in a separated Thread and then call all
      * the DataListeners of the Class recovered or Data.class, using
      * handleDataRecoveryNotCached
      *
-     * @param listener The listener of the method
      * @param where The where clausule
      */
     public static void recoveryDataAsync(String where) {
@@ -69,11 +68,10 @@ public class SingletonDataManagement {
     }
 
     /**
-     * This method uses ArrayList<Data> in a separated Thread and then call all
+     * This method uses ArrayList&lt;Data&gt; in a separated Thread and then call all
      * the DataListeners of the Class recovered or Data.class, using
      * handleDataRecoveryNotCached
      *
-     * @param listener The listener of the method
      * @param p The processor
      * @param where The where clausule
      */
@@ -83,12 +81,11 @@ public class SingletonDataManagement {
     }
 
     /**
-     * This method uses ArrayList<Data> in a separated Thread and then call all
+     * This method uses ArrayList&lt;Data&gt; in a separated Thread and then call all
      * the DataListeners of the Class recovered or Data.class, using
      * handleDataRecoveryCached if cached is true and
      * handleDataRecoveryNotCached if cached is false
      *
-     * @param listener The listener of the method
      * @param p The processor
      * @param where The where clausule
      * @param cached True if cached with the table name or no
@@ -99,11 +96,10 @@ public class SingletonDataManagement {
     }
 
     /**
-     * This method uses ArrayList<Data> in a separated Thread and then call all
+     * This method uses ArrayList&lt;Data&gt; in a separated Thread and then call all
      * the DataListeners of the Class recovered or Data.class, using
      * handleDataRecoveryCached
      *
-     * @param listener The listener of the method
      * @param p The processor
      * @param where The where clausule
      * @param key The key used to cache the data

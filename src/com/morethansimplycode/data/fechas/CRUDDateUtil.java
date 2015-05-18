@@ -9,8 +9,8 @@ import java.util.Calendar;
 
 /**
  * @author Oscar
- * @date 19-nov-2014
- * @time 18:12:53
+ * Date 19-nov-2014
+ * Time 18:12:53
  */
 public class CRUDDateUtil {
 

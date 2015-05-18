@@ -45,9 +45,11 @@ public class DataManagement {
     }
 
     /**
-     * A contructor using a Connection
-     *
-     * @param connection
+     * 
+     * @param className
+     * @param url
+     * @param user
+     * @param password 
      */
     public DataManagement(String className, String url, String user, String password) {
 
@@ -65,7 +67,7 @@ public class DataManagement {
      * Recover an Array of Data of the given class with the given where clausule
      *
      * @param where
-     * @return An ArrayList<Data> with the recovered Data
+     * @return An ArrayList&lt;Data&gt; with the recovered Data
      */
     public ArrayList<Data> recoverData(String where) {
 
@@ -73,18 +75,17 @@ public class DataManagement {
     }
 
     /**
-     * This method uses ArrayList<Data> in a separated Thread and then gives it
+     * This method uses ArrayList&lt;Data&gt; in a separated Thread and then gives it
      * to a DataListener, using handleDataRecoveryNotCached
      *
      * @param listener The listener of the method
-     * @param where The where clausule
      */
     public void recoverDataAsync(DataListener listener) {
 
     }
 
     /**
-     * This method uses ArrayList<Data> in a separated Thread and then gives it
+     * This method uses ArrayList&lt;Data&gt; in a separated Thread and then gives it
      * to a DataListener, using handleDataRecoveryNotCached
      *
      * @param listener The listener of the method
@@ -95,7 +96,7 @@ public class DataManagement {
     }
 
     /**
-     * This method uses ArrayList<Data> in a separated Thread and then gives it
+     * This method uses ArrayList&lt;Data&gt; in a separated Thread and then gives it
      * to a DataListener, using handleDataRecoveryNotCached
      *
      * @param listener The listener of the method
@@ -107,7 +108,7 @@ public class DataManagement {
     }
 
     /**
-     * This method uses ArrayList<Data> in a separated Thread and then gives it
+     * This method uses ArrayList&lt;Data&gt; in a separated Thread and then gives it
      * to a DataListener, using handleDataRecoveryCached if cached is true and
      * handleDataRecoveryNotCached if cached is false
      *
@@ -121,7 +122,7 @@ public class DataManagement {
     }
 
     /**
-     * This method uses ArrayList<Data> in a separated Thread and then gives it
+     * This method uses ArrayList&lt;Data&gt; in a separated Thread and then gives it
      * to a DataListener, using handleDataRecoveryCached
      *
      * @param listener The listener of the method
@@ -134,7 +135,7 @@ public class DataManagement {
     }
 
     /**
-     * This method add an ArrayList<Data> to the cache, in order to not repeat
+     * This method add an ArrayList&lt;Data&gt; to the cache, in order to not repeat
      * the connection to the DataBase when it's not needed. It's for internal
      * use only, so that's why it's private.
      *

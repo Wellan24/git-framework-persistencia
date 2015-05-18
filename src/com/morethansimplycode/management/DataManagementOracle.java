@@ -50,7 +50,6 @@ public class DataManagementOracle implements DataManagementDatabase {
     }
 
     /**
-     * @param textoSentencia
      * @return Devuelve un ResultSet con los datos de la consulta o null si hay
      * una excepción
      */
@@ -79,7 +78,7 @@ public class DataManagementOracle implements DataManagementDatabase {
     @Override
     public boolean insertData(Connection connection, Data d) {
 
-        StringBuilder text = createInsertQuery(d, DataAnnotationUtil.devuelveOrdenDeColumnas(d.getClass()));
+        StringBuilder text = createInsertQuery(d, DataAnnotationUtil.recoverDBInfoColumns(d.getClass()));
         executeNonQuery(connection, text.toString());
         return existsByPrimaryKey(connection, d);
     }
@@ -160,7 +159,7 @@ public class DataManagementOracle implements DataManagementDatabase {
 
         StringBuilder text = new StringBuilder("Select ");
         text.append(selectColumns).append(" from ");
-        text.append(DataAnnotationUtil.devuelveNombreTablaDato(d.getClass())).append(" where ");
+        text.append(DataAnnotationUtil.recoverDBInfoTableName(d.getClass())).append(" where ");
 
         for (int i = 0; i < whereColumns.length; i++) {
 
@@ -199,19 +198,18 @@ public class DataManagementOracle implements DataManagementDatabase {
      * Creates a Select Query with this format: "Select ${columns} from ${table}
      * where primaryKey[i] = ${columnValue} [, ...]
      *
-     * @param selectColumns
-     * @param whereColumns
+     * @param columns
      * @param d
      * @return A String builder with the text of the query.
      */
     @Override
     public StringBuilder createSelectQueryByPrimaryKey(String columns, Data d) {
 
-        String[] primaryKeys = DataAnnotationUtil.devuelveClave(d.getClass());
+        String[] primaryKeys = DataAnnotationUtil.recoverDBInfoPrimaryKeys(d.getClass());
 
         StringBuilder text = new StringBuilder("Select ");
         text.append(columns).append(" from ");
-        text.append(DataAnnotationUtil.devuelveNombreTablaDato(d.getClass())).append(" where ");
+        text.append(DataAnnotationUtil.recoverDBInfoTableName(d.getClass())).append(" where ");
 
         for (int i = 0; i < primaryKeys.length; i++) {
 
@@ -235,8 +233,7 @@ public class DataManagementOracle implements DataManagementDatabase {
      * String.join(",",${columns}) from ${table} where primaryKey[i] =
      * ${columnValue} [, ...]
      *
-     * @param selectColumns
-     * @param whereColumns
+     * @param columns
      * @param d
      * @return A String builder with the text of the query.
      */
@@ -265,16 +262,16 @@ public class DataManagementOracle implements DataManagementDatabase {
      *
      * @param d
      * @param claves
-     * @param autoNumKey The key for the autonum
+     * @param auto 
      * @return An StringBuilder with the text of the Query
      */
     @Override
     public StringBuilder createInsertQuery(Data d, String[] claves, boolean auto) {
 
         StringBuilder textoSentencia = new StringBuilder("insert into ");
-        textoSentencia.append(DataAnnotationUtil.devuelveNombreTablaDato(d.getClass()));
+        textoSentencia.append(DataAnnotationUtil.recoverDBInfoTableName(d.getClass()));
         textoSentencia.append("(");
-        List<String> autoNumKeys = Arrays.asList(DataAnnotationUtil.recoverAutoNumKey(d.getClass()));
+        List<String> autoNumKeys = Arrays.asList(DataAnnotationUtil.recoverDBInfoAutoNumKeys(d.getClass()));
         for (String clave : claves) {
 
             if (!autoNumKeys.contains(clave))
@@ -321,9 +318,9 @@ public class DataManagementOracle implements DataManagementDatabase {
     @Override
     public StringBuilder construyeSentenciaUpdate(Data d) {
 
-        String[] claves = DataAnnotationUtil.devuelveOrdenDeColumnas(d.getClass());
+        String[] claves = DataAnnotationUtil.recoverDBInfoColumns(d.getClass());
         StringBuilder textoSentencia = new StringBuilder("update ");
-        textoSentencia.append(DataAnnotationUtil.devuelveNombreTablaDato(d.getClass()));
+        textoSentencia.append(DataAnnotationUtil.recoverDBInfoTableName(d.getClass()));
         textoSentencia.append(" set ");
         for (int i = 1; i < claves.length; i++) {
 
