@@ -14,9 +14,8 @@ import java.sql.ResultSet;
  * @author Oscar
  */
 public interface DataManagementDatabase {
-    
+
     // TODO Añadir soporte para TOP y LIMIT
-    
     /**
      * Executes a query without result.
      *
@@ -82,7 +81,7 @@ public interface DataManagementDatabase {
      * @param d
      * @return A String builder with the text of the query.
      */
-    public StringBuilder createSelectQueryByColumns(String selectColumns, String[] whereColumns, Data d);
+    public StringBuilder createSelectQueryByColumns(Class<? extends Data> d, String selectColumns, String[] whereColumns, Object... valuesWhereColumns);
 
     /**
      * Creates a Select Query with this format: "Select String.join(",",
@@ -94,7 +93,7 @@ public interface DataManagementDatabase {
      * @param d
      * @return A String builder with the text of the query.
      */
-    public StringBuilder createSelectQueryByColumns(String[] selectColumns, String[] whereColumns, Data d);
+    public StringBuilder createSelectQueryByColumns(Class<? extends Data> d, String[] selectColumns, String[] whereColumns, Object... valuesWhereColumns);
 
     /**
      * Creates a Select Query with this format: "Select ${columns} from ${table}
@@ -104,15 +103,25 @@ public interface DataManagementDatabase {
      * @param d
      * @return A String builder with the text of the query.
      */
-    public StringBuilder createSelectQueryByPrimaryKey(String columns, Data d);
+    public StringBuilder createSelectQueryByPrimaryKey(Class<? extends Data> d, String columns, Object... primaryKeyValues);
 
     /**
      * Creates a Select Query.
-     * @param columns 
+     *
+     * @param columns
      * @param d
      * @return A String builder with the text of the query.
      */
-    public StringBuilder createSelectQueryByPrimaryKey(String[] columns, Data d);
+    public StringBuilder createSelectQueryByPrimaryKey(Class<? extends Data> d, String[] columns, Object... primaryKeyValues);
+
+    /**
+     * Creates a Insert Query.
+     *
+     * @param d
+     * @param claves
+     * @return An StringBuilder with the text of the Query
+     */
+    public StringBuilder createInsertQuery(Data d);
 
     /**
      * Creates a Insert Query.
@@ -129,16 +138,18 @@ public interface DataManagementDatabase {
      *
      * @param d
      * @param claves
-     * @param auto 
+     * @param auto
      * @return An StringBuilder with the text of the Query
      */
     public StringBuilder createInsertQuery(Data d, String[] claves, boolean auto);
 
-    public boolean updateDato(Connection connection, Data d);
+    public boolean updateDato(Data d, Connection connection);
 
-    public StringBuilder construyeSentenciaUpdate(Data d);
+    public StringBuilder createUpdateQuery(Data d);
 
-    public String construyeSentenciaSelect(String[] claves, String nombreTabla);
+    public String createSelectQuery(String[] claves, String nombreTabla);
 
-    public String construyeSentenciaSelect(String[] claves, String nombreTabla, String where);
+    public String createSelectQuery(String[] claves, String nombreTabla, String where);
+
+    public DataManagementDatabase top(int recordsToRecover);
 }

@@ -56,8 +56,8 @@ public class SingletonDataManagement {
     }
 
     /**
-     * This method uses ArrayList&lt;Data&gt; in a separated Thread and then call all
-     * the DataListeners of the Class recovered or Data.class, using
+     * This method uses ArrayList&lt;Data&gt; in a separated Thread and then
+     * call all the DataListeners of the Class recovered or Data.class, using
      * handleDataRecoveryNotCached
      *
      * @param where The where clausule
@@ -68,8 +68,8 @@ public class SingletonDataManagement {
     }
 
     /**
-     * This method uses ArrayList&lt;Data&gt; in a separated Thread and then call all
-     * the DataListeners of the Class recovered or Data.class, using
+     * This method uses ArrayList&lt;Data&gt; in a separated Thread and then
+     * call all the DataListeners of the Class recovered or Data.class, using
      * handleDataRecoveryNotCached
      *
      * @param p The processor
@@ -81,8 +81,8 @@ public class SingletonDataManagement {
     }
 
     /**
-     * This method uses ArrayList&lt;Data&gt; in a separated Thread and then call all
-     * the DataListeners of the Class recovered or Data.class, using
+     * This method uses ArrayList&lt;Data&gt; in a separated Thread and then
+     * call all the DataListeners of the Class recovered or Data.class, using
      * handleDataRecoveryCached if cached is true and
      * handleDataRecoveryNotCached if cached is false
      *
@@ -96,8 +96,8 @@ public class SingletonDataManagement {
     }
 
     /**
-     * This method uses ArrayList&lt;Data&gt; in a separated Thread and then call all
-     * the DataListeners of the Class recovered or Data.class, using
+     * This method uses ArrayList&lt;Data&gt; in a separated Thread and then
+     * call all the DataListeners of the Class recovered or Data.class, using
      * handleDataRecoveryCached
      *
      * @param p The processor
@@ -108,12 +108,15 @@ public class SingletonDataManagement {
 
         dataManagment.recoverDataAsync(dataListener, p, where, true);
     }
-    
+
 }
 
 class DataListenerImpl implements DataListener {
 
     private final ArrayList<DataListener> userDataListeners;
+    private final Class<? extends Data> listenedDataClass = Data.class;
+
+    private Class<? extends Data> listeningDataClass = Data.class;
 
     public DataListenerImpl() {
         userDataListeners = new ArrayList<>();
@@ -121,17 +124,31 @@ class DataListenerImpl implements DataListener {
 
     @Override
     public Class<? extends Data> getClassforHandle() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        return listenedDataClass;
+    }
+
+    @Override
+    public boolean isListeningClass(Class<? extends Data> dataClass) {
+
+        listeningDataClass = dataClass;
+        return dataClass.equals(listenedDataClass);
     }
 
     @Override
     public void handleDataRecoveryNotCached(ArrayList<Data> data, DataProcessor processor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        userDataListeners.stream().filter((dl) -> (dl.isListeningClass(listeningDataClass))).forEach((dl) -> {
+            dl.handleDataRecoveryNotCached(data, processor);
+        });
     }
 
     @Override
     public void handleDataRecoveryCached(String key, DataProcessor processor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        userDataListeners.stream().filter((dl) -> (dl.isListeningClass(listeningDataClass))).forEach((dl) -> {
+            dl.handleDataRecoveryCached(key, processor);
+        });
     }
 
     public void addDataListener(DataListener dataListener) {
@@ -145,5 +162,5 @@ class DataListenerImpl implements DataListener {
     public void addDataListeners(List<DataListener> dataListener) {
         userDataListeners.addAll(dataListener);
     }
-    
+
 }

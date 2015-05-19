@@ -21,6 +21,13 @@ public interface DataListener {
      * @return The class
      */
     public Class<? extends Data> getClassforHandle();
+    
+    /**
+     * Use this for know if a DataListener listens a class
+     *
+     * @return The class
+     */
+    public boolean isListeningClass(Class<? extends Data> dataClass);
 
     /**
      * This method handle the recover of Data that is not Cached.

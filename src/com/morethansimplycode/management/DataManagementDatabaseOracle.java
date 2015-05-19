@@ -24,10 +24,10 @@ import java.util.logging.Logger;
  *
  * @author Oscar
  */
-public class DataManagementOracle implements DataManagementDatabase {
+public class DataManagementDatabaseOracle implements DataManagementDatabase {
 
-    // TODO Transfomar esta clase en una que cambie en función de la 
-    // base de datos y que sea una interfaz que se implemente
+    public int top = -1;
+
     /**
      * Executes a query without result.
      *
@@ -43,13 +43,17 @@ public class DataManagementOracle implements DataManagementDatabase {
             return statement.executeUpdate(query) == 1;
 
         } catch (SQLException ex) {
-            Logger.getLogger(DataManagementOracle.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DataManagementDatabaseOracle.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return false;
     }
 
     /**
+     * Executes a query with the given connection.
+     *
+     * @param connection The connection to use
+     * @param query The query to execute
      * @return Devuelve un ResultSet con los datos de la consulta o null si hay
      * una excepción
      */
@@ -61,7 +65,7 @@ public class DataManagementOracle implements DataManagementDatabase {
             return statement.executeQuery(query);
 
         } catch (SQLException ex) {
-            Logger.getLogger(DataManagementOracle.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DataManagementDatabaseOracle.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return null;
@@ -96,12 +100,18 @@ public class DataManagementOracle implements DataManagementDatabase {
 
         try (Statement statement = connection.createStatement()) {
 
-            createSelectQueryByPrimaryKey("true", d);
+            String[] primaryKeys = DataAnnotationUtil.recoverDBInfoPrimaryKeys(d.getClass());
+
+            Object[] values = new Object[primaryKeys.length];
+            for (int i = 0; i < values.length; i++)
+                values[i] = d.get(primaryKeys[i]);
+
+            createSelectQueryByPrimaryKey(d.getClass(), "true", values);
             ResultSet rs = statement.executeQuery("");
             return rs.next();
 
         } catch (SQLException ex) {
-            Logger.getLogger(DataManagementOracle.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DataManagementDatabaseOracle.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }
@@ -135,14 +145,52 @@ public class DataManagementOracle implements DataManagementDatabase {
 
         try (Statement statement = connection.createStatement()) {
 
+            Object[] values = new Object[columns.length];
+
+            for (int i = 0; i < values.length; i++)
+                values[i] = d.get(columns[i]);
+
             Set<String> set = d.keySet();
-            ResultSet rs = statement.executeQuery(createSelectQueryByColumns("true", columns, d).toString());
+            ResultSet rs = statement.executeQuery(createSelectQueryByColumns(d.getClass(), "true", columns, values).toString());
             return rs.next();
 
         } catch (SQLException ex) {
-            Logger.getLogger(DataManagementOracle.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DataManagementDatabaseOracle.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+
+    @Override
+    public String createSelectQuery(String[] claves, String nombreTabla) {
+
+        StringBuilder text = new StringBuilder("Select ");
+
+        for (String clave : claves) {
+
+            text.append(clave).append(",");
+        }
+
+        text.replace(text.length() - 1, text.length(), " from " + nombreTabla);
+
+        AddTop(text);
+
+        return text.toString();
+    }
+
+    @Override
+    public String createSelectQuery(String[] claves, String nombreTabla, String where) {
+
+        StringBuilder dev = new StringBuilder("Select ");
+
+        for (String clave : claves) {
+
+            dev.append(clave).append(",");
+        }
+
+        dev.replace(dev.length() - 1, dev.length(), " from ");
+        dev.append(nombreTabla).append(" ").append(where);
+
+        return dev.toString();
     }
 
     /**
@@ -155,16 +203,16 @@ public class DataManagementOracle implements DataManagementDatabase {
      * @return A String builder with the text of the query.
      */
     @Override
-    public StringBuilder createSelectQueryByColumns(String selectColumns, String[] whereColumns, Data d) {
+    public StringBuilder createSelectQueryByColumns(Class<? extends Data> d, String selectColumns, String[] whereColumns, Object... valuesWhereColumns) {
 
         StringBuilder text = new StringBuilder("Select ");
         text.append(selectColumns).append(" from ");
-        text.append(DataAnnotationUtil.recoverDBInfoTableName(d.getClass())).append(" where ");
+        text.append(DataAnnotationUtil.recoverDBInfoTableName(d)).append(" where ");
 
         for (int i = 0; i < whereColumns.length; i++) {
 
             String primaryKey = whereColumns[i];
-            Object value = d.get(primaryKey);
+            Object value = valuesWhereColumns[i];
 
             if (value instanceof String)
                 text.append(primaryKey).append(" = '").append(value).append("'");
@@ -174,6 +222,8 @@ public class DataManagementOracle implements DataManagementDatabase {
             if (i != whereColumns.length - 1)
                 text.append(",");
         }
+
+        AddTop(text);
 
         return text;
     }
@@ -189,9 +239,9 @@ public class DataManagementOracle implements DataManagementDatabase {
      * @return A String builder with the text of the query.
      */
     @Override
-    public StringBuilder createSelectQueryByColumns(String[] selectColumns, String[] whereColumns, Data d) {
+    public StringBuilder createSelectQueryByColumns(Class<? extends Data> d, String[] selectColumns, String[] whereColumns, Object... valuesWhereColumns) {
 
-        return createSelectQueryByColumns(String.join(",", selectColumns), whereColumns, d);
+        return createSelectQueryByColumns(d, String.join(",", selectColumns), whereColumns, valuesWhereColumns);
     }
 
     /**
@@ -203,18 +253,18 @@ public class DataManagementOracle implements DataManagementDatabase {
      * @return A String builder with the text of the query.
      */
     @Override
-    public StringBuilder createSelectQueryByPrimaryKey(String columns, Data d) {
+    public StringBuilder createSelectQueryByPrimaryKey(Class<? extends Data> d, String columns, Object... primaryKeyValues) {
 
-        String[] primaryKeys = DataAnnotationUtil.recoverDBInfoPrimaryKeys(d.getClass());
+        String[] primaryKeys = DataAnnotationUtil.recoverDBInfoPrimaryKeys(d);
 
         StringBuilder text = new StringBuilder("Select ");
         text.append(columns).append(" from ");
-        text.append(DataAnnotationUtil.recoverDBInfoTableName(d.getClass())).append(" where ");
+        text.append(DataAnnotationUtil.recoverDBInfoTableName(d)).append(" where ");
 
-        for (int i = 0; i < primaryKeys.length; i++) {
+        for (int i = 0; i < primaryKeyValues.length; i++) {
 
             String primaryKey = primaryKeys[i];
-            Object value = d.get(primaryKey);
+            Object value = primaryKeyValues[i];
 
             if (value instanceof String)
                 text.append(primaryKey).append(" = '").append(value).append("'");
@@ -224,6 +274,8 @@ public class DataManagementOracle implements DataManagementDatabase {
             if (i != primaryKeys.length - 1)
                 text.append(",");
         }
+
+        AddTop(text);
 
         return text;
     }
@@ -238,9 +290,9 @@ public class DataManagementOracle implements DataManagementDatabase {
      * @return A String builder with the text of the query.
      */
     @Override
-    public StringBuilder createSelectQueryByPrimaryKey(String[] columns, Data d) {
+    public StringBuilder createSelectQueryByPrimaryKey(Class<? extends Data> d, String[] columns, Object... primaryKeyValues) {
 
-        return createSelectQueryByPrimaryKey(String.join(",", columns), d);
+        return createSelectQueryByPrimaryKey(d, String.join(",", columns));
     }
 
     /**
@@ -251,9 +303,22 @@ public class DataManagementOracle implements DataManagementDatabase {
      * @return An StringBuilder with the text of the Query
      */
     @Override
-    public StringBuilder createInsertQuery(Data d, String[] claves) {
+    public StringBuilder createInsertQuery(Data d) {
 
-        return createInsertQuery(d, claves, false);
+        return createInsertQuery(d, null, false);
+    }
+
+    /**
+     * Creates a Insert Query.
+     *
+     * @param d
+     * @param keys
+     * @return An StringBuilder with the text of the Query
+     */
+    @Override
+    public StringBuilder createInsertQuery(Data d, String[] keys) {
+
+        return createInsertQuery(d, keys, false);
     }
 
     /**
@@ -261,25 +326,29 @@ public class DataManagementOracle implements DataManagementDatabase {
      * annotation
      *
      * @param d
-     * @param claves
-     * @param auto 
+     * @param keys
+     * @param auto
      * @return An StringBuilder with the text of the Query
      */
     @Override
-    public StringBuilder createInsertQuery(Data d, String[] claves, boolean auto) {
+    public StringBuilder createInsertQuery(Data d, String[] keys, boolean auto) {
 
         StringBuilder textoSentencia = new StringBuilder("insert into ");
         textoSentencia.append(DataAnnotationUtil.recoverDBInfoTableName(d.getClass()));
         textoSentencia.append("(");
         List<String> autoNumKeys = Arrays.asList(DataAnnotationUtil.recoverDBInfoAutoNumKeys(d.getClass()));
-        for (String clave : claves) {
+
+        if (keys == null)
+            keys = DataAnnotationUtil.recoverDBInfoColumns(d.getClass());
+
+        for (String clave : keys) {
 
             if (!autoNumKeys.contains(clave))
                 textoSentencia.append(clave).append(",");
         }
         textoSentencia.replace(textoSentencia.length() - 1, textoSentencia.length(), ")");
         textoSentencia.append(" VALUES(");
-        for (String clave : claves) {
+        for (String clave : keys) {
 
             Object rec = d.get(clave);
             if (rec instanceof String || rec instanceof LocalDate) {
@@ -305,18 +374,18 @@ public class DataManagementOracle implements DataManagementDatabase {
     }
 
     @Override
-    public boolean updateDato(Connection connection, Data d) {
+    public boolean updateDato(Data d, Connection connection) {
 
         if (existsByPrimaryKey(connection, d)) {
 
-            return executeNonQuery(connection, construyeSentenciaUpdate(d).toString());
+            return executeNonQuery(connection, createUpdateQuery(d).toString());
         }
 
         return false;
     }
 
     @Override
-    public StringBuilder construyeSentenciaUpdate(Data d) {
+    public StringBuilder createUpdateQuery(Data d) {
 
         String[] claves = DataAnnotationUtil.recoverDBInfoColumns(d.getClass());
         StringBuilder textoSentencia = new StringBuilder("update ");
@@ -351,34 +420,19 @@ public class DataManagementOracle implements DataManagementDatabase {
     }
 
     @Override
-    public String construyeSentenciaSelect(String[] claves, String nombreTabla) {
+    public DataManagementDatabase top(int recordsToRecover) {
 
-        StringBuilder dev = new StringBuilder("Select ");
-
-        for (String clave : claves) {
-
-            dev.append(clave).append(",");
-        }
-
-        dev.replace(dev.length() - 1, dev.length(), " from " + nombreTabla);
-
-        return dev.toString();
+        top = recordsToRecover;
+        return this;
     }
 
-    @Override
-    public String construyeSentenciaSelect(String[] claves, String nombreTabla, String where) {
+    private void AddTop(StringBuilder text) {
 
-        StringBuilder dev = new StringBuilder("Select ");
+        if (top != -1) {
 
-        for (String clave : claves) {
-
-            dev.append(clave).append(",");
+            text.append(" ROWNUM <= ").append(top);
+            top = -1;
         }
-
-        dev.replace(dev.length() - 1, dev.length(), " from ");
-        dev.append(nombreTabla).append(" ").append(where);
-
-        return dev.toString();
     }
 
 }
