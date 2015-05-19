@@ -150,7 +150,6 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
             for (int i = 0; i < values.length; i++)
                 values[i] = d.get(columns[i]);
 
-            Set<String> set = d.keySet();
             ResultSet rs = statement.executeQuery(createSelectQueryByColumns(d.getClass(), "true", columns, values).toString());
             return rs.next();
 
@@ -172,7 +171,7 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
 
         text.replace(text.length() - 1, text.length(), " from " + nombreTabla);
 
-        AddTop(text);
+        addTop(text);
 
         return text.toString();
     }
@@ -180,17 +179,22 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
     @Override
     public String createSelectQuery(String[] claves, String nombreTabla, String where) {
 
-        StringBuilder dev = new StringBuilder("Select ");
+        StringBuilder text = new StringBuilder("Select ");
 
         for (String clave : claves) {
 
-            dev.append(clave).append(",");
+            text.append(clave).append(",");
         }
 
-        dev.replace(dev.length() - 1, dev.length(), " from ");
-        dev.append(nombreTabla).append(" ").append(where);
+        text.replace(text.length() - 1, text.length(), " from ");
+        text.append(nombreTabla).append(" ");
 
-        return dev.toString();
+        if(where != null && !where.isEmpty()){
+            
+            text.append(" where ").append(where);
+            addTop(text);
+        }
+        return text.toString();
     }
 
     /**
@@ -223,7 +227,7 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
                 text.append(",");
         }
 
-        AddTop(text);
+        addTop(text);
 
         return text;
     }
@@ -275,7 +279,7 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
                 text.append(",");
         }
 
-        AddTop(text);
+        addTop(text);
 
         return text;
     }
@@ -426,7 +430,7 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
         return this;
     }
 
-    private void AddTop(StringBuilder text) {
+    private void addTop(StringBuilder text) {
 
         if (top != -1) {
 
