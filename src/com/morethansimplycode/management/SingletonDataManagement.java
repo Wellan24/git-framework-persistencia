@@ -68,6 +68,8 @@ public class SingletonDataManagement {
         return dataManagment.recoverData(d);
     }
     
+    
+    
     /**
      * Recover an Array of Data of the given class with the given where clausule
      *
@@ -77,6 +79,19 @@ public class SingletonDataManagement {
     public ArrayList<Data> recoverData(Class<? extends Data> d, String where) {
 
         return dataManagment.recoverData(d, where);
+    }
+
+    /**
+     * This method uses ArrayList&lt;Data&gt; in a separated Thread and then
+     * call all the DataListeners of the Class recovered or Data.class, using
+     * handleDataRecoveryNotCached
+     *
+     * @param where The where clausule
+     */
+    public SingletonDataManagement recoveryDataAsync(Class<? extends Data> d) {
+
+        dataManagment.recoverDataAsync(d, dataListener);
+        return this;
     }
 
     /**
@@ -165,8 +180,8 @@ class DataListenerImpl implements DataListener {
     @Override
     public boolean isListeningClass(Class<? extends Data> dataClass) {
 
-        listeningDataClass = dataClass;
-        return dataClass.equals(listenedDataClass);
+        listeningDataClass = dataClass;        
+        return dataClass.equals(listenedDataClass) || dataClass.getSuperclass().equals(listenedDataClass);
     }
 
     @Override

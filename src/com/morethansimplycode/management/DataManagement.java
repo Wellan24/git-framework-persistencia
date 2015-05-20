@@ -136,8 +136,6 @@ public class DataManagement {
      */
     public ArrayList<Data> recoverData(Class<? extends Data> d, String where) {
 
-        
-
         return recoverData(d, null, where);
     }
 
@@ -155,6 +153,8 @@ public class DataManagement {
     /**
      * Recover an Array of Data of the given class with the given where clausule
      *
+     * @param d The class to recover the data
+     * @param
      * @param where The where clausule to use
      * @return An ArrayList&lt;Data&gt; with the recovered Data
      */
@@ -173,15 +173,21 @@ public class DataManagement {
                 data = d.newInstance();
                 for (String key : keys)
                     data.put(key, rs.getObject(key));
-
-                if (p != null && p.isValid(data) && p.process(data))
+                if (p != null) {
+                    
+                    if (p.isValid(data) && p.process(data))
+                        ret.add(data);
+                    
+                } else {
                     ret.add(data);
+                }
             }
 
             if (p != null)
                 p.commit();
 
             top = -1;
+            System.out.println(ret);
             return ret;
         } catch (SQLException | InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(DataManagement.class.getName()).log(Level.SEVERE, null, ex);
@@ -198,6 +204,14 @@ public class DataManagement {
      */
     public void recoverDataAsync(Class<? extends Data> d, DataListener listener) {
 
+        new Thread(new Runnable() {
+
+            public void run() {
+                ArrayList<Data> data = recoverData(d);
+                if (listener.isListeningClass(d))
+                    listener.handleDataRecoveryNotCached(data, null);
+            }
+        }).start();
     }
 
     /**

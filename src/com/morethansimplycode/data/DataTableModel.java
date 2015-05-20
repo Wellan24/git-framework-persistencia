@@ -100,4 +100,5 @@ public class DataTableModel extends CRUDTableModel {
         return data[rowIndex].get(fieldNames[columnIndex]);
     }
 
+    
 }
