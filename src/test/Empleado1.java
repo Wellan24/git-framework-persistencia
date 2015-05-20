@@ -14,30 +14,27 @@ import com.morethansimplycode.data.DataTableInfo;
  *
  * @author Oscar
  */
-@DataDBInfo(columns = {"ID", "NOMBRE", "SUELDO"}, 
-        tableName = "EMPLEADOS", primaryKey = {"ID", "NOMBRE"})
-@DataTableInfo(fields = {"ID", "NOMBRE", "SUELDO"}, 
-        classes = {Integer.class, String.class, Integer.class}, 
-        columnNames = {"Nº de Empleado","Nombre", "Sueldo"})
+@DataDBInfo(columns = {"ID", "NOMBRE", "SUELDO", "JEFE"}, tableName = "EMPLEADOS1", primaryKey = {"ID"})
+@DataTableInfo(fields = {"NOMBRE", "SUELDO", "JEFE"}, classes = {String.class, Integer.class, String.class}, columnNames = {"NOMBRE", "SUELDO", "JEFE"})
 @DataDetailInfo(names = {"ID", "NOMBRE", "SUELDO"})
-public class Empleado extends Data {
+public class Empleado1 extends Data {
 
-    public Empleado() {
+    public Empleado1() {
         super(3);
     }
 
-    public Empleado(int initialCapacity) {
+    public Empleado1(int initialCapacity) {
         super(initialCapacity);
     }
 
-    private Empleado(Empleado emple) {
+    private Empleado1(Empleado1 emple) {
         super(emple);
     }
 
     @Override
     public Data copia() {
 
-        return new Empleado(this);
+        return new Empleado1(this);
     }
 
 }

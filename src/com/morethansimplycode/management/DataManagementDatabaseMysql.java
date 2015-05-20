@@ -198,19 +198,15 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
 
         StringBuilder text = new StringBuilder("Select ");
 
-        for (String clave : claves) {
-
+        for (String clave : claves)
             text.append(clave).append(",");
-        }
 
         text.replace(text.length() - 1, text.length(), " from ");
         text.append(nombreTabla).append(" ");
 
-        if (where != null && !where.isEmpty()) {
-
+        if (where != null && !where.isEmpty())
             text.append(" where ").append(where);
-        }
-        
+
         addTop(text);
         return text.toString();
     }

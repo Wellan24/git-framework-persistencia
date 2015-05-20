@@ -125,31 +125,9 @@ public class DataManagement {
      */
     public ArrayList<Data> recoverData(Class<? extends Data> d) {
 
-        ArrayList<Data> ret = new ArrayList<>();
-        String[] keys = DataAnnotationUtil.recoverDBInfoColumns(d);
-        String tableName = DataAnnotationUtil.recoverDBInfoTableName(d);
-
-        try (ResultSet rs = dataManagementDatabase.executeQuery(connection,
-                dataManagementDatabase.top(top).createSelectQuery(keys, tableName))) {
-            Data data;
-            while (rs.next()) {
-
-                data = d.newInstance();
-                for (String key : keys)
-                    data.put(key, rs.getObject(key));
-
-                ret.add(data);
-            }
-
-            top = -1;
-            return ret;
-        } catch (SQLException | InstantiationException | IllegalAccessException ex) {
-            Logger.getLogger(DataManagement.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return ret;
+        return recoverData(d, null, "");
     }
-    
+
     /**
      * Recover an Array of Data of the given class with the given where clausule
      *
@@ -158,12 +136,37 @@ public class DataManagement {
      */
     public ArrayList<Data> recoverData(Class<? extends Data> d, String where) {
 
+        
+
+        return recoverData(d, null, where);
+    }
+
+    /**
+     * Recover an Array of Data of the given class with the given where clausule
+     *
+     * @param where The where clausule to use
+     * @return An ArrayList&lt;Data&gt; with the recovered Data
+     */
+    public ArrayList<Data> recoverData(Class<? extends Data> d, DataProcessor p) {
+
+        return recoverData(d, p, null);
+    }
+
+    /**
+     * Recover an Array of Data of the given class with the given where clausule
+     *
+     * @param where The where clausule to use
+     * @return An ArrayList&lt;Data&gt; with the recovered Data
+     */
+    public ArrayList<Data> recoverData(Class<? extends Data> d, DataProcessor p, String where) {
+
         ArrayList<Data> ret = new ArrayList<>();
         String[] keys = DataAnnotationUtil.recoverDBInfoColumns(d);
         String tableName = DataAnnotationUtil.recoverDBInfoTableName(d);
 
         try (ResultSet rs = dataManagementDatabase.executeQuery(connection,
                 dataManagementDatabase.top(top).createSelectQuery(keys, tableName, where))) {
+
             Data data;
             while (rs.next()) {
 
@@ -171,8 +174,12 @@ public class DataManagement {
                 for (String key : keys)
                     data.put(key, rs.getObject(key));
 
-                ret.add(data);
+                if (p != null && p.isValid(data) && p.process(data))
+                    ret.add(data);
             }
+
+            if (p != null)
+                p.commit();
 
             top = -1;
             return ret;

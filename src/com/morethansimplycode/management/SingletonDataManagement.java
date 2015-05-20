@@ -20,7 +20,6 @@ public class SingletonDataManagement {
 
     private DataManagement dataManagment;
 
-    // TODO Usar este listener para llamar a todo el Array de Listener
     private DataListenerImpl dataListener;
 
     public static SingletonDataManagement instance;
