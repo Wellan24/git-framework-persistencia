@@ -14,7 +14,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jdk.nashorn.internal.objects.NativeArray;
 
 /**
  * This class manage a connection to a DataBase and its uses.
@@ -37,6 +36,8 @@ public class DataManagement {
      * The DataCache object that represents the cache.
      */
     private DataManagementDatabase dataManagementDatabase;
+
+    private int top = -1;
 
     /**
      * A contructor using a Connection
@@ -99,6 +100,12 @@ public class DataManagement {
         }
     }
 
+    public DataManagement top(int top) {
+
+        this.top = top;
+        return this;
+    }
+
     /**
      * Get the DataManagementDatabase object, used by this class to create the
      * queries. Use it if you want to create it.
@@ -121,9 +128,9 @@ public class DataManagement {
         ArrayList<Data> ret = new ArrayList<>();
         String[] keys = DataAnnotationUtil.recoverDBInfoColumns(d);
         String tableName = DataAnnotationUtil.recoverDBInfoTableName(d);
-        
+
         try (ResultSet rs = dataManagementDatabase.executeQuery(connection,
-                dataManagementDatabase.createSelectQuery(keys, tableName))) {
+                dataManagementDatabase.top(top).createSelectQuery(keys, tableName))) {
             Data data;
             while (rs.next()) {
 
@@ -134,6 +141,7 @@ public class DataManagement {
                 ret.add(data);
             }
 
+            top = -1;
             return ret;
         } catch (SQLException | InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(DataManagement.class.getName()).log(Level.SEVERE, null, ex);

@@ -18,30 +18,44 @@ import java.util.List;
  */
 public class SingletonDataManagement {
 
-    private static DataManagement dataManagment;
+    private DataManagement dataManagment;
 
     // TODO Usar este listener para llamar a todo el Array de Listener
-    private static DataListenerImpl dataListener;
+    private DataListenerImpl dataListener;
 
-    public static DataManagement getDataManagment() {
+    public static SingletonDataManagement instance;
+
+    private SingletonDataManagement() {
+
+    }
+
+    public static SingletonDataManagement getInstance() {
+
+        if (instance == null)
+            instance = new SingletonDataManagement();
+
+        return instance;
+    }
+
+    public DataManagement getDataManagment() {
         return dataManagment;
     }
 
-    public static void setDataManagment(DataManagement dataManagment) {
-        SingletonDataManagement.dataManagment = dataManagment;
-        SingletonDataManagement.dataListener = new DataListenerImpl();
+    public void setDataManagment(DataManagement dataManagment) {
+        this.dataManagment = dataManagment;
+        this.dataListener = new DataListenerImpl();
     }
 
-    public static void addDataListener(DataListener dataListener) {
-        SingletonDataManagement.dataListener.addDataListener(dataListener);
+    public void addDataListener(DataListener dataListener) {
+        this.dataListener.addDataListener(dataListener);
     }
 
-    public static void addDataListeners(DataListener[] dataListener) {
-        SingletonDataManagement.dataListener.addDataListeners(dataListener);
+    public void addDataListeners(DataListener[] dataListener) {
+        this.dataListener.addDataListeners(dataListener);
     }
 
-    public static void addDataListeners(List<DataListener> dataListener) {
-        SingletonDataManagement.dataListener.addDataListeners(dataListener);
+    public void addDataListeners(List<DataListener> dataListener) {
+        this.dataListener.addDataListeners(dataListener);
     }
 
     /**
@@ -50,7 +64,7 @@ public class SingletonDataManagement {
      * @param where
      * @return An ArrayList&lt;Data&gt; with the recovered Data
      */
-    public static ArrayList<Data> recoverData(Class<? extends Data> d, String where) {
+    public ArrayList<Data> recoverData(Class<? extends Data> d, String where) {
 
         return dataManagment.recoverData(d, where);
     }
@@ -62,9 +76,10 @@ public class SingletonDataManagement {
      *
      * @param where The where clausule
      */
-    public static void recoveryDataAsync(Class<? extends Data> d, String where) {
+    public SingletonDataManagement recoveryDataAsync(Class<? extends Data> d, String where) {
 
         dataManagment.recoverDataAsync(d, dataListener, where);
+        return this;
     }
 
     /**
@@ -75,9 +90,10 @@ public class SingletonDataManagement {
      * @param p The processor
      * @param where The where clausule
      */
-    public static void recoveryDataAsync(Class<? extends Data> d, DataProcessor p, String where) {
+    public SingletonDataManagement recoveryDataAsync(Class<? extends Data> d, DataProcessor p, String where) {
 
         dataManagment.recoverDataAsync(d, dataListener, p, where);
+        return this;
     }
 
     /**
@@ -90,9 +106,10 @@ public class SingletonDataManagement {
      * @param where The where clausule
      * @param cached True if cached with the table name or no
      */
-    public static void recoveryDataAsync(Class<? extends Data> d, DataProcessor p, String where, boolean cached) {
+    public SingletonDataManagement recoveryDataAsync(Class<? extends Data> d, DataProcessor p, String where, boolean cached) {
 
         dataManagment.recoverDataAsync(d, dataListener, p, where, where);
+        return this;
     }
 
     /**
@@ -104,9 +121,16 @@ public class SingletonDataManagement {
      * @param where The where clausule
      * @param key The key used to cache the data
      */
-    public void recoveryDataAsync(Class<? extends Data> d, DataProcessor p, String where, String key) {
+    public SingletonDataManagement recoveryDataAsync(Class<? extends Data> d, DataProcessor p, String where, String key) {
 
         dataManagment.recoverDataAsync(d, dataListener, p, where, true);
+        return this;
+    }
+
+    public SingletonDataManagement top(int top) {
+
+        dataManagment.top(top);
+        return this;
     }
 
 }

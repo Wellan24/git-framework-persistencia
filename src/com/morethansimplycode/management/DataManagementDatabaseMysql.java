@@ -77,6 +77,7 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
         try {
             statement = connection.createStatement();
             statement.closeOnCompletion();
+            System.out.println(query);
             return statement.executeQuery(query);
 
         } catch (SQLException ex) {
@@ -448,7 +449,7 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
 
         if (top != -1) {
 
-            text.replace(0, 6, "Select LIMIT " + top);
+            text.append(" LIMIT ").append(top);
             top = -1;
         }
     }
