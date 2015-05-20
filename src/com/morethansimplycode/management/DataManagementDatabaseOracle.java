@@ -31,15 +31,16 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
 
     /**
      * Gets the instance for this DataManagementDatabase
+     *
      * @return The instance
      */
     public static DataManagementDatabase getInstance() {
-        
-        if(instance == null)
+
+        if (instance == null)
             instance = new DataManagementDatabaseOracle();
-        
+
         return instance;
-    }   
+    }
 
     /**
      * Executes a query without result.
@@ -73,8 +74,9 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
     @Override
     public synchronized ResultSet executeQuery(Connection connection, String query) {
 
-        try (Statement statement = connection.createStatement()) {
-
+        try {
+            Statement statement = connection.createStatement();
+            System.out.println(statement.isClosed());
             return statement.executeQuery(query);
 
         } catch (SQLException ex) {
@@ -202,8 +204,8 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
         text.replace(text.length() - 1, text.length(), " from ");
         text.append(nombreTabla).append(" ");
 
-        if(where != null && !where.isEmpty()){
-            
+        if (where != null && !where.isEmpty()) {
+
             text.append(" where ").append(where);
             addTop(text);
         }

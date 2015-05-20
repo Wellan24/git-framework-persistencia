@@ -7,13 +7,13 @@ package com.morethansimplycode.crud;
 
 import com.morethansimplycode.data.Data;
 import java.util.List;
-import javax.swing.table.TableModel;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Oscar
  */
-public interface CRUDTableModel extends TableModel{
+public abstract class CRUDTableModel extends DefaultTableModel{
     
     /**
      * Use this to set the Data in the Model
@@ -21,17 +21,19 @@ public interface CRUDTableModel extends TableModel{
      * @param d The data to show
      * @return itself
      */
-    public CRUDTableModel setData(Data[] d);
+    public abstract CRUDTableModel setData(Data[] d);
     /**
      * Use this to set the Data in the Model
      * Return itself for chain call.
      * @param d The data to show
      * @return itself
      */
-    public CRUDTableModel setData(List<Data> d);
+    public abstract CRUDTableModel setData(List<Data> d);
     /**
      * Return the data which the model uses
      * @return an Array of Data
      */
-    public Data[] getData();
+    public abstract Data[] getData();
+    
+    
 }

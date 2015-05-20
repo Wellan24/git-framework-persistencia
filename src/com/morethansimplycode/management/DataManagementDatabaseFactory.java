@@ -16,8 +16,8 @@ public class DataManagementDatabaseFactory {
         switch (name) {
             case "oracle":
                 return DataManagementDatabaseOracle.getInstance();
-            case "mysql":
-                DataManagementDatabaseMysql.getInstance();
+            case "MySQL":
+                return DataManagementDatabaseMysql.getInstance();
             default:
                 throw new IllegalArgumentException(name + 
                         " is not a supported Database, please check the name "

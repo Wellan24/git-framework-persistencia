@@ -28,6 +28,7 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
 
     public int top = -1;
     private static DataManagementDatabaseMysql instance;
+    private Statement statement;
 
     /**
      * Gets the instance for this DataManagementDatabase
@@ -73,8 +74,9 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
     @Override
     public synchronized ResultSet executeQuery(Connection connection, String query) {
 
-        try (Statement statement = connection.createStatement()) {
-
+        try {
+            statement = connection.createStatement();
+            statement.closeOnCompletion();
             return statement.executeQuery(query);
 
         } catch (SQLException ex) {

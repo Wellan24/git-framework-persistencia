@@ -18,7 +18,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface DataTableInfo {
 
-    String[] columns();
+    String[] fields();
+    
+    String[] columnNames();
 
     Class[] classes();
 }

@@ -119,15 +119,15 @@ public class DataManagement {
     public ArrayList<Data> recoverData(Class<? extends Data> d, String where) {
 
         ArrayList<Data> ret = new ArrayList<>();
-        try {
-            String[] keys = DataAnnotationUtil.recoverDBInfoColumns(d);
-            String tableName = DataAnnotationUtil.recoverDBInfoTableName(d);
-            ResultSet rs = dataManagementDatabase.executeQuery(connection,
-                    dataManagementDatabase.createSelectQuery(keys, tableName));
-
-            Data data = d.newInstance();
+        String[] keys = DataAnnotationUtil.recoverDBInfoColumns(d);
+        String tableName = DataAnnotationUtil.recoverDBInfoTableName(d);
+        
+        try (ResultSet rs = dataManagementDatabase.executeQuery(connection,
+                dataManagementDatabase.createSelectQuery(keys, tableName))) {
+            Data data;
             while (rs.next()) {
 
+                data = d.newInstance();
                 for (String key : keys)
                     data.put(key, rs.getObject(key));
 
