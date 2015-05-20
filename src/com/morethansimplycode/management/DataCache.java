@@ -53,7 +53,7 @@ public final class DataCache {
      * Returns the cached data in the given key.
      *
      * @param key The key where the data is saved
-     * @return
+     * @return The Data cached with this key
      */
     public ArrayList<Data> getCachedData(String key) {
 
@@ -64,6 +64,7 @@ public final class DataCache {
      * Save the data in the given key.
      *
      * @param key The key where the data will be saved
+     * @param data The data to save in the cache
      */
     void putCacheData(String key, ArrayList<Data> data) {
 

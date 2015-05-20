@@ -38,18 +38,37 @@ public class DataManagement {
     /**
      * A contructor using a Connection
      *
-     * @param connection
+     * @param connection the connection to use.
      */
     public DataManagement(Connection connection) {
         this.connection = connection;
     }
+    
+    /**
+     * Creates a connections using the given parameters.
+     * 
+     * @param className The class name of the driver
+     * @param url The url to connect the Database
+     */
+    public DataManagement(String className, String url) {
+
+        try {
+
+            Class.forName(className);
+            this.connection = DriverManager.getConnection(url);
+
+        } catch (SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(DataManagement.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     /**
+     * Creates a connections using the given parameters
      * 
-     * @param className
-     * @param url
-     * @param user
-     * @param password 
+     * @param className The class name of the driver
+     * @param url The url to connect the Database
+     * @param user The user used or an empty string
+     * @param password The password for the user
      */
     public DataManagement(String className, String url, String user, String password) {
 
@@ -64,9 +83,19 @@ public class DataManagement {
     }
 
     /**
+     * Get the DataManagementDatabase object, used by this class to
+     * create the queries. Use it if you want to create it.
+     * @return The DataManagementDatabase object.
+     */
+    public DataManagementDatabase getDataManagementDatabase() {
+        
+        return dataManagementDatabase;
+    }    
+    
+    /**
      * Recover an Array of Data of the given class with the given where clausule
      *
-     * @param where
+     * @param where The where clausule to use
      * @return An ArrayList&lt;Data&gt; with the recovered Data
      */
     public ArrayList<Data> recoverData(String where) {
@@ -140,7 +169,7 @@ public class DataManagement {
      * use only, so that's why it's private.
      *
      * @param key The key used in he Map of the cache.
-     * @param data
+     * @param data The data to Cache
      */
     private void addDataToCache(String key, ArrayList<Data> data) {
 
@@ -153,8 +182,8 @@ public class DataManagement {
     /**
      * Use this method to recover Cached Data saved with the given key.
      *
-     * @param key
-     * @return
+     * @param key The key of the data in the cache.
+     * @return The data saved with that key.
      */
     public ArrayList<Data> getDataFromCache(String key) {
 

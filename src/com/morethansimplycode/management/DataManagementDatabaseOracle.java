@@ -289,8 +289,8 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
      * String.join(",",${columns}) from ${table} where primaryKey[i] =
      * ${columnValue} [, ...]
      *
-     * @param columns
-     * @param d
+     * @param columns The columns you want to select
+     * @param d The class of the data to select
      * @return A String builder with the text of the query.
      */
     @Override
@@ -302,8 +302,7 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
     /**
      * Creates a Insert Query.
      *
-     * @param d
-     * @param claves
+     * @param d The data to insert
      * @return An StringBuilder with the text of the Query
      */
     @Override

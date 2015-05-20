@@ -13,8 +13,8 @@ public interface CRUDTableListener{
 
     /**
      * This method is called when an item is clicked in a table
-     * @param newSelectedRow
-     * @param newSelectedColumn 
+     * @param newSelectedRow The new Row
+     * @param newSelectedColumn the new Column
      */
     public void onItemClicked(int newSelectedRow, int newSelectedColumn);
 }

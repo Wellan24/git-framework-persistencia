@@ -15,7 +15,6 @@ import java.sql.ResultSet;
  */
 public interface DataManagementDatabase {
 
-    // TODO Añadir soporte para TOP y LIMIT
     /**
      * Executes a query without result.
      *
@@ -109,7 +108,7 @@ public interface DataManagementDatabase {
      * Creates a Select Query.
      *
      * @param columns
-     * @param d
+     * @param d The class of the objects to select
      * @return A String builder with the text of the query.
      */
     public StringBuilder createSelectQueryByPrimaryKey(Class<? extends Data> d, String[] columns, Object... primaryKeyValues);
@@ -117,8 +116,7 @@ public interface DataManagementDatabase {
     /**
      * Creates a Insert Query.
      *
-     * @param d
-     * @param claves
+     * @param d The data to insert
      * @return An StringBuilder with the text of the Query
      */
     public StringBuilder createInsertQuery(Data d);

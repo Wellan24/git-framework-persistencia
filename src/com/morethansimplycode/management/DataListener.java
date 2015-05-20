@@ -25,7 +25,8 @@ public interface DataListener {
     /**
      * Use this for know if a DataListener listens a class
      *
-     * @return The class
+     * @param dataClass The class to test
+     * @return If is listening that class.
      */
     public boolean isListeningClass(Class<? extends Data> dataClass);
 

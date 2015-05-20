@@ -18,14 +18,14 @@ public interface CRUDTableModel extends TableModel{
     /**
      * Use this to set the Data in the Model
      * Return itself for chain call.
-     * @param d
+     * @param d The data to show
      * @return itself
      */
     public CRUDTableModel setData(Data[] d);
     /**
      * Use this to set the Data in the Model
      * Return itself for chain call.
-     * @param d
+     * @param d The data to show
      * @return itself
      */
     public CRUDTableModel setData(List<Data> d);
