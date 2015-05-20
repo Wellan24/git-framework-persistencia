@@ -32,15 +32,16 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
 
     /**
      * Gets the instance for this DataManagementDatabase
+     *
      * @return The instance
      */
     public static DataManagementDatabase getInstance() {
-        
-        if(instance == null)
+
+        if (instance == null)
             instance = new DataManagementDatabaseMysql();
-        
+
         return instance;
-    }   
+    }
 
     /**
      * Executes a query without result.
@@ -205,11 +206,12 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
         text.replace(text.length() - 1, text.length(), " from ");
         text.append(nombreTabla).append(" ");
 
-        if(where != null && !where.isEmpty()){
-            
+        if (where != null && !where.isEmpty()) {
+
             text.append(" where ").append(where);
-            addTop(text);
         }
+        
+        addTop(text);
         return text.toString();
     }
 

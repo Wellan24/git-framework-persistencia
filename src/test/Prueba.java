@@ -22,10 +22,12 @@ public class Prueba extends javax.swing.JFrame {
      */
     public Prueba() {
         initComponents();
+        
         SingletonDataManagement.getInstance().setDataManagment(
                 new DataManagement("com.mysql.jdbc.Driver", "jdbc:mysql://192.168.1.15:3306/test", "test", "p@ssw0rd"));
-        ArrayList<Data> ds = SingletonDataManagement.getInstance().top(1).recoverData(Empleado.class, "");
-        System.out.println(ds);
+        
+        ArrayList<Data> ds = SingletonDataManagement.getInstance().top(1).recoverData(Empleado.class);
+        
         tabla.setModel(new DataTableModel(Empleado.class, ds));
     }
 

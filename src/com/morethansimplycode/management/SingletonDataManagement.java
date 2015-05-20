@@ -64,6 +64,17 @@ public class SingletonDataManagement {
      * @param where
      * @return An ArrayList&lt;Data&gt; with the recovered Data
      */
+    public ArrayList<Data> recoverData(Class<? extends Data> d) {
+
+        return dataManagment.recoverData(d);
+    }
+    
+    /**
+     * Recover an Array of Data of the given class with the given where clausule
+     *
+     * @param where
+     * @return An ArrayList&lt;Data&gt; with the recovered Data
+     */
     public ArrayList<Data> recoverData(Class<? extends Data> d, String where) {
 
         return dataManagment.recoverData(d, where);
