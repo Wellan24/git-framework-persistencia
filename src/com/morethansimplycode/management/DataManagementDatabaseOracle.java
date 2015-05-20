@@ -31,22 +31,22 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
     /**
      * Executes a query without result.
      *
-     * @param connection
-     * @param query
-     * @return True if the query is success or false if not
+     * @param connection The connection to use
+     * @param query The query to execute.
+     * @return Returns -1 if the query fails.
      */
     @Override
-    public boolean executeNonQuery(Connection connection, String query) {
+    public int executeNonQuery(Connection connection, String query) {
 
         try (Statement statement = connection.createStatement()) {
 
-            return statement.executeUpdate(query) == 1;
+            return statement.executeUpdate(query);
 
         } catch (SQLException ex) {
             Logger.getLogger(DataManagementDatabaseOracle.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        return false;
+        return -1;
     }
 
     /**
@@ -381,7 +381,7 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
 
         if (existsByPrimaryKey(connection, d)) {
 
-            return executeNonQuery(connection, createUpdateQuery(d).toString());
+            return executeNonQuery(connection, createUpdateQuery(d).toString()) == 1;
         }
 
         return false;

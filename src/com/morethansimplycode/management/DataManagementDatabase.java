@@ -18,13 +18,17 @@ public interface DataManagementDatabase {
     /**
      * Executes a query without result.
      *
-     * @param connection
-     * @param query
-     * @return True if the query is success or false if not
+     * @param connection The connection to use
+     * @param query The query to execute
+     * @return The number of rows changed
      */
-    public boolean executeNonQuery(Connection connection, String query);
+    public int executeNonQuery(Connection connection, String query);
 
     /**
+     * Executes a query that expects a result
+     * 
+     * @param connection The connection to use
+     * @param query The query to execute
      * @return Devuelve un ResultSet con los datos de la consulta o null si hay
      * una excepción
      */
