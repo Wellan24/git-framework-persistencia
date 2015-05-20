@@ -24,10 +24,10 @@ import java.util.logging.Logger;
  *
  * @author Oscar
  */
-public class DataManagementDatabaseOracle implements DataManagementDatabase {
+public class DataManagementDatabaseMysql implements DataManagementDatabase {
 
     public int top = -1;
-    private static DataManagementDatabaseOracle instance;
+    private static DataManagementDatabaseMysql instance;
 
     /**
      * Gets the instance for this DataManagementDatabase
@@ -36,7 +36,7 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
     public static DataManagementDatabase getInstance() {
         
         if(instance == null)
-            instance = new DataManagementDatabaseOracle();
+            instance = new DataManagementDatabaseMysql();
         
         return instance;
     }   
@@ -56,7 +56,7 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
             return statement.executeUpdate(query);
 
         } catch (SQLException ex) {
-            Logger.getLogger(DataManagementDatabaseOracle.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DataManagementDatabaseMysql.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return -1;
@@ -78,7 +78,7 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
             return statement.executeQuery(query);
 
         } catch (SQLException ex) {
-            Logger.getLogger(DataManagementDatabaseOracle.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DataManagementDatabaseMysql.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return null;
@@ -124,7 +124,7 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
             return rs.next();
 
         } catch (SQLException ex) {
-            Logger.getLogger(DataManagementDatabaseOracle.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DataManagementDatabaseMysql.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }
@@ -167,7 +167,7 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
             return rs.next();
 
         } catch (SQLException ex) {
-            Logger.getLogger(DataManagementDatabaseOracle.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DataManagementDatabaseMysql.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }
@@ -442,6 +442,15 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
         return this;
     }
 
+    private void addTop(StringBuilder text) {
+
+        if (top != -1) {
+
+            text.replace(0, 6, "Select LIMIT " + top);
+            top = -1;
+        }
+    }
+
     @Override
     public String createSelectQuery(Class<? extends Data> d) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -450,15 +459,6 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
     @Override
     public String createSelectQuery(Class<? extends Data> d, String where) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private void addTop(StringBuilder text) {
-
-        if (top != -1) {
-
-            text.append(" ROWNUM <= ").append(top);
-            top = -1;
-        }
     }
 
 }

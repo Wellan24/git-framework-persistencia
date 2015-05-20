@@ -50,9 +50,9 @@ public class SingletonDataManagement {
      * @param where
      * @return An ArrayList&lt;Data&gt; with the recovered Data
      */
-    public static ArrayList<Data> recoverData(String where) {
+    public static ArrayList<Data> recoverData(Class<? extends Data> d, String where) {
 
-        return dataManagment.recoverData(where);
+        return dataManagment.recoverData(d, where);
     }
 
     /**
@@ -62,9 +62,9 @@ public class SingletonDataManagement {
      *
      * @param where The where clausule
      */
-    public static void recoveryDataAsync(String where) {
+    public static void recoveryDataAsync(Class<? extends Data> d, String where) {
 
-        dataManagment.recoverDataAsync(dataListener, where);
+        dataManagment.recoverDataAsync(d, dataListener, where);
     }
 
     /**
@@ -75,9 +75,9 @@ public class SingletonDataManagement {
      * @param p The processor
      * @param where The where clausule
      */
-    public static void recoveryDataAsync(DataProcessor p, String where) {
+    public static void recoveryDataAsync(Class<? extends Data> d, DataProcessor p, String where) {
 
-        dataManagment.recoverDataAsync(dataListener, p, where);
+        dataManagment.recoverDataAsync(d, dataListener, p, where);
     }
 
     /**
@@ -90,9 +90,9 @@ public class SingletonDataManagement {
      * @param where The where clausule
      * @param cached True if cached with the table name or no
      */
-    public static void recoveryDataAsync(DataProcessor p, String where, boolean cached) {
+    public static void recoveryDataAsync(Class<? extends Data> d, DataProcessor p, String where, boolean cached) {
 
-        dataManagment.recoverDataAsync(dataListener, p, where, where);
+        dataManagment.recoverDataAsync(d, dataListener, p, where, where);
     }
 
     /**
@@ -104,9 +104,9 @@ public class SingletonDataManagement {
      * @param where The where clausule
      * @param key The key used to cache the data
      */
-    public void recoveryDataAsync(DataProcessor p, String where, String key) {
+    public void recoveryDataAsync(Class<? extends Data> d, DataProcessor p, String where, String key) {
 
-        dataManagment.recoverDataAsync(dataListener, p, where, true);
+        dataManagment.recoverDataAsync(d, dataListener, p, where, true);
     }
 
 }
@@ -145,7 +145,7 @@ class DataListenerImpl implements DataListener {
 
     @Override
     public void handleDataRecoveryCached(String key, DataProcessor processor) {
-        
+
         userDataListeners.stream().filter((dl) -> (dl.isListeningClass(listeningDataClass))).forEach((dl) -> {
             dl.handleDataRecoveryCached(key, processor);
         });

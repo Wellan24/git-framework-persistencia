@@ -14,7 +14,7 @@ import java.sql.ResultSet;
  * @author Oscar
  */
 public interface DataManagementDatabase {
-
+    
     /**
      * Executes a query without result.
      *
@@ -148,8 +148,12 @@ public interface DataManagementDatabase {
     public boolean updateDato(Data d, Connection connection);
 
     public StringBuilder createUpdateQuery(Data d);
-
+    
     public String createSelectQuery(String[] claves, String nombreTabla);
+    
+    public String createSelectQuery(Class<? extends Data> d);
+    
+    public String createSelectQuery(Class<? extends Data> d, String where);
 
     public String createSelectQuery(String[] claves, String nombreTabla, String where);
 
