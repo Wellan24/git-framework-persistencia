@@ -141,12 +141,8 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
     @Override
     public void handleDataRecoveryNotCached(ArrayList<Data> data, DataProcessor processor) {
 
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                tabla.setModel(new DataTableModel(Empleado.class, data));
-            }
+        SwingUtilities.invokeLater(() -> {
+            tabla.setModel(new DataTableModel(Empleado.class, data));
         });
     }
 
