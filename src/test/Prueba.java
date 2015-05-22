@@ -33,6 +33,7 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
         /* Ejemplo de Aync */
         SingletonDataManagement.getInstance().addDataListener(this);
         SingletonDataManagement.getInstance().recoveryDataAsync(Empleado.class);
+        
 
         /* Ejemplo sin Async */
 //        ArrayList<Data> ds = SingletonDataManagement.getInstance().recoverData(Empleado.class);
@@ -50,6 +51,7 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
 
         jScrollPane2 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
+        dataTab1 = new com.morethansimplycode.crud.DataTab();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -73,14 +75,21 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(298, Short.MAX_VALUE))
+                .addGap(124, 124, 124)
+                .addComponent(dataTab1, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(dataTab1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(54, 54, 54))))
         );
 
         pack();
@@ -120,11 +129,15 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.morethansimplycode.crud.DataTab dataTab1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable tabla;
     // End of variables declaration//GEN-END:variables
 
-    private Class clase = Empleado.class;
+    
+    /* The listening implementing zone */
+    
+    private final Class clase = Empleado.class;
 
     @Override
     public Class<? extends Data> getClassforHandle() {
@@ -142,6 +155,8 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
     public void handleDataRecoveryNotCached(ArrayList<Data> data, DataProcessor processor) {
 
         SwingUtilities.invokeLater(() -> {
+            
+            dataTab1.setData(data);
             tabla.setModel(new DataTableModel(Empleado.class, data));
         });
     }

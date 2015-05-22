@@ -204,13 +204,13 @@ public class DataManagement {
      */
     public void recoverDataAsync(Class<? extends Data> d, DataListener listener) {
 
-        new Thread(new Runnable() {
-
-            public void run() {
-                ArrayList<Data> data = recoverData(d);
-                if (listener.isListeningClass(d))
-                    listener.handleDataRecoveryNotCached(data, null);
-            }
+        new Thread(() -> {
+            
+            ArrayList<Data> data = recoverData(d);
+            
+            if (listener.isListeningClass(d))
+                listener.handleDataRecoveryNotCached(data, null);
+            
         }).start();
     }
 
@@ -223,6 +223,14 @@ public class DataManagement {
      */
     public void recoverDataAsync(Class<? extends Data> d, DataListener listener, String where) {
 
+        new Thread(() -> {
+            
+            ArrayList<Data> data = recoverData(d, where);
+            
+            if (listener.isListeningClass(d))
+                listener.handleDataRecoveryNotCached(data, null);
+            
+        }).start();
     }
 
     /**
@@ -235,6 +243,14 @@ public class DataManagement {
      */
     public void recoverDataAsync(Class<? extends Data> d, DataListener listener, DataProcessor p, String where) {
 
+        new Thread(() -> {
+            
+            ArrayList<Data> data = recoverData(d, p , where);
+            
+            if (listener.isListeningClass(d))
+                listener.handleDataRecoveryNotCached(data, null);
+            
+        }).start();
     }
 
     /**
@@ -249,6 +265,16 @@ public class DataManagement {
      */
     public void recoverDataAsync(Class<? extends Data> d, DataListener listener, DataProcessor p, String where, boolean cached) {
 
+        new Thread(() -> {
+            
+            String tableName = DataAnnotationUtil.recoverDBInfoTableName(d);
+            ArrayList<Data> data = recoverData(d, p , where);
+            addDataToCache(tableName, data);
+            
+            if (listener.isListeningClass(d))
+                listener.handleDataRecoveryCached(tableName, p);
+            
+        }).start();
     }
 
     /**
@@ -262,6 +288,15 @@ public class DataManagement {
      */
     public void recoverDataAsync(Class<? extends Data> d, DataListener listener, DataProcessor p, String where, String key) {
 
+        new Thread(() -> {
+            
+            ArrayList<Data> data = recoverData(d, p , where);
+            addDataToCache(key, data);
+            
+            if (listener.isListeningClass(d))
+                listener.handleDataRecoveryCached(key, p);
+            
+        }).start();
     }
 
     /**
