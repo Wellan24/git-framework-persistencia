@@ -19,7 +19,7 @@ import com.morethansimplycode.data.DataTableInfo;
 @DataTableInfo(fields = {"ID", "NOMBRE", "SUELDO"}, 
         classes = {Integer.class, String.class, Integer.class}, 
         columnNames = {"Nº de Empleado","Nombre", "Sueldo"})
-@DataDetailInfo(names = {"ID", "NOMBRE", "SUELDO"})
+@DataDetailInfo(fields = {"NOMBRE", "SUELDO"}, namesShow = {"Nombre", "Sueldo"})
 public class Empleado extends Data {
 
     public Empleado() {

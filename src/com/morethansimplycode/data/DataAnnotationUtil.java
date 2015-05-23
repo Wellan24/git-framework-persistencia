@@ -99,12 +99,31 @@ public class DataAnnotationUtil {
      * @param d The class for which table name wants to recover
      * @return The names or an empty array
      */
-    public static String[] recoverDetailInfoNames(Class<? extends Data> d) {
+    public static String[] recoverDetailInfoFields(Class<? extends Data> d) {
 
         Annotation a = d.getAnnotation(DataDetailInfo.class);
         if (a != null) {
 
-            String[] names = ((DataDetailInfo) a).names();
+            String[] names = ((DataDetailInfo) a).fields();
+            return (names != null) ? names : new String[]{};
+        }
+
+        return new String[]{};
+    }
+    
+    /**
+     * Recover the fields names to show in the Detail Section from
+     * DataDetailInfo. If there's no anntotation, returns an empty Array.
+     *
+     * @param d The class for which table name wants to recover
+     * @return The names or an empty array
+     */
+    public static String[] recoverDetailInfoNamesShow(Class<? extends Data> d) {
+
+        Annotation a = d.getAnnotation(DataDetailInfo.class);
+        if (a != null) {
+
+            String[] names = ((DataDetailInfo) a).namesShow();
             return (names != null) ? names : new String[]{};
         }
 

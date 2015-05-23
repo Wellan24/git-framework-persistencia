@@ -16,7 +16,7 @@ import com.morethansimplycode.data.DataTableInfo;
  */
 @DataDBInfo(columns = {"ID", "NOMBRE", "SUELDO", "JEFE"}, tableName = "EMPLEADOS1", primaryKey = {"ID"})
 @DataTableInfo(fields = {"NOMBRE", "SUELDO", "JEFE"}, classes = {String.class, Integer.class, String.class}, columnNames = {"NOMBRE", "SUELDO", "JEFE"})
-@DataDetailInfo(names = {"ID", "NOMBRE", "SUELDO"})
+@DataDetailInfo(fields = {"ID", "NOMBRE", "SUELDO"})
 public class Empleado1 extends Data {
 
     public Empleado1() {

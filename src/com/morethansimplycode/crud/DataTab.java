@@ -35,7 +35,7 @@ public class DataTab extends javax.swing.JPanel {
      */
     public DataTab() {
         
-        initComponents();
+        initComponents();        
     }
 
     public void setData(Data[] data) {
@@ -52,13 +52,13 @@ public class DataTab extends javax.swing.JPanel {
 
     private void generateTabItems() {
 
-        tabContainer.setBounds(tabContainer.getBounds().x, tabContainer.getBounds().y, panel.getBounds().height, tabContainer.getBounds().width);
+        tabContainer.setBounds(tabContainer.getBounds().x, tabContainer.getBounds().y,tabContainer.getBounds().width + 10, panel.getBounds().height);
         
         for (Data d : data) {
 
             DataTabItem item = new DataTabItem(d, 80, 80);
             tabContainer.add(item);
-            tabContainer.setSize(tabContainer.getWidth() + item.getPreferredSize().width, tabContainer.getHeight());
+            tabContainer.setSize(tabContainer.getWidth() + item.getPreferredSize().width + 10, tabContainer.getHeight());
             System.out.println(tabContainer.getComponentCount() + " " + item.getSize());
         }
 
@@ -128,6 +128,7 @@ public class DataTab extends javax.swing.JPanel {
         panel.setLayout(null);
 
         tabContainer.setBackground(new java.awt.Color(102, 0, 204));
+        tabContainer.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 5));
         panel.add(tabContainer);
         tabContainer.setBounds(0, 0, 0, 40);
 
@@ -146,7 +147,9 @@ public class DataTab extends javax.swing.JPanel {
 
     private void resize(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_resize
 
-        tabContainer.setBounds(tabContainer.getBounds().x, tabContainer.getBounds().y, panel.getBounds().height, tabContainer.getBounds().width);
+        System.out.println(tabContainer.getBounds());
+        tabContainer.setBounds(tabContainer.getBounds().x, tabContainer.getBounds().y,tabContainer.getBounds().width, panel.getBounds().height);
+        System.out.println(tabContainer.getBounds());
         this.updateUI();
     }//GEN-LAST:event_resize
 

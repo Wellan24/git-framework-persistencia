@@ -18,5 +18,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface DataDetailInfo {
 
-    String[] names();
+    String[] fields() default {};
+    String[] namesShow() default {};
 }
