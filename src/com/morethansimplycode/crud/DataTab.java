@@ -27,6 +27,8 @@ public class DataTab extends javax.swing.JPanel {
             left(-5);
         System.out.println("right" + DataTab.this.tabContainer.getX());
     });
+    
+    private DataTabListener listener;
 
     private Data[] data;
 
@@ -36,6 +38,14 @@ public class DataTab extends javax.swing.JPanel {
     public DataTab() {
         
         initComponents();        
+    }
+
+    public DataTabListener getListener() {
+        return listener;
+    }
+
+    public void setListener(DataTabListener listener) {
+        this.listener = listener;
     }
 
     public void setData(Data[] data) {
@@ -48,6 +58,10 @@ public class DataTab extends javax.swing.JPanel {
 
         this.data = data.toArray(new Data[data.size()]);
         generateTabItems();
+    }
+
+    public Data[] getData() {
+        return data;
     }
 
     private void generateTabItems() {

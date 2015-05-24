@@ -29,6 +29,12 @@ public class DataTabItem extends javax.swing.JPanel {
         
         initComponents();
         value = d;
+        button.setText(d.toString());
+        setSize(width, height);
+    }
+
+    public void setDataTabItemSize(int width, int height) {
+        
         button.setPreferredSize(new Dimension(width, height));
         this.setPreferredSize(new Dimension(width, height));
     }

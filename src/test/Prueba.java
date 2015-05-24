@@ -33,10 +33,9 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
         /* Ejemplo de Aync */
 //        SingletonDataManagement.getInstance().addDataListener(this);
 //        SingletonDataManagement.getInstance().recoveryDataAsync(Empleado.class);
-        
         dataTab1.setData(new Data[]{new Empleado(), new Empleado()});
         dataDetail1.setClassData(Empleado.class);
-        
+
         /* Ejemplo sin Async */
 //        ArrayList<Data> ds = SingletonDataManagement.getInstance().recoverData(Empleado.class);
 //        tabla.setModel(new DataTableModel(Empleado.class, ds));
@@ -110,21 +109,14 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Prueba.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Prueba.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Prueba.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            
+            javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+            
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Prueba.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+
         //</editor-fold>
 
         /* Create and display the form */
@@ -140,9 +132,7 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
     private javax.swing.JTable tabla;
     // End of variables declaration//GEN-END:variables
 
-    
     /* The listening implementing zone */
-    
     private final Class clase = Empleado.class;
 
     @Override
@@ -161,7 +151,7 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
     public void handleDataRecoveryNotCached(ArrayList<Data> data, DataProcessor processor) {
 
         SwingUtilities.invokeLater(() -> {
-            
+
             dataTab1.setData(data);
             tabla.setModel(new DataTableModel(Empleado.class, data));
         });
