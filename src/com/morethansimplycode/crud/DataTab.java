@@ -6,7 +6,10 @@
 package com.morethansimplycode.crud;
 
 import com.morethansimplycode.data.Data;
+import java.awt.Component;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.Timer;
 
@@ -14,7 +17,7 @@ import javax.swing.Timer;
  *
  * @author Oscar Date 21-may-2015 Time 22:15:09
  */
-public class DataTab extends javax.swing.JPanel {
+public class DataTab extends javax.swing.JPanel implements ActionListener {
 
     private final Timer tLeft = new Timer(6, (e) -> {
         if (DataTab.this.tabContainer.getX() < 0)
@@ -29,7 +32,6 @@ public class DataTab extends javax.swing.JPanel {
     });
     
     private DataTabListener listener;
-
     private Data[] data;
 
     /**
@@ -44,6 +46,17 @@ public class DataTab extends javax.swing.JPanel {
         return listener;
     }
 
+    public void setItemSize(int width,int height){
+        
+        Component[] components = tabContainer.getComponents();
+        
+        for (Component c : components) {
+            
+            if(c instanceof DataTabItem)
+                ((DataTabItem)c).setDataTabItemSize(width, height);
+        }
+    }
+    
     public void setListener(DataTabListener listener) {
         this.listener = listener;
     }
@@ -70,7 +83,7 @@ public class DataTab extends javax.swing.JPanel {
         
         for (Data d : data) {
 
-            DataTabItem item = new DataTabItem(d, 80, 80);
+            DataTabItem item = new DataTabItem(d, 80, 80, this);
             tabContainer.add(item);
             tabContainer.setSize(tabContainer.getWidth() + item.getPreferredSize().width + 10, tabContainer.getHeight());
             System.out.println(tabContainer.getComponentCount() + " " + item.getSize());
@@ -200,5 +213,12 @@ public class DataTab extends javax.swing.JPanel {
     private javax.swing.JPanel panel;
     private javax.swing.JPanel tabContainer;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        
+        if(listener != null)
+            listener.selectionChanged(((DataTabItem)e.getSource()).value);
+    }
 
 }

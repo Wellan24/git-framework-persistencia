@@ -15,19 +15,29 @@ import java.util.List;
  * Date 24-may-2015
  * Time 13:10:25
  */
-public class DataTabDetail extends javax.swing.JPanel {
+public class DataTabDetail extends javax.swing.JPanel implements DataTabListener{
 
     
     
     /** Creates new form DataTabDetail */
     public DataTabDetail() {
         initComponents();
+        tab.setListener(this);
     }
 
+    public void setClassData(Class<? extends Data> d){
+        
+        detail.setClassData(d);
+    }
+    
     public void setData(Data[] data){
         
         tab.setData(data);
     }
+
+    public void setItemSize(int width, int height) {
+        tab.setItemSize(width, height);
+    }   
     
     public void setData(List<Data> data){
         
@@ -69,5 +79,11 @@ public class DataTabDetail extends javax.swing.JPanel {
     private com.morethansimplycode.crud.DataDetail detail;
     private com.morethansimplycode.crud.DataTab tab;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void selectionChanged(Data newSelection) {
+        
+        detail.setData(newSelection);
+    }
 
 }

@@ -14,11 +14,11 @@ import com.morethansimplycode.data.DataTableInfo;
  *
  * @author Oscar
  */
-@DataDBInfo(columns = {"ID", "NOMBRE", "SUELDO"}, 
+@DataDBInfo(columns = {"ID", "NOMBRE", "SUELDO"},
         tableName = "EMPLEADOS", primaryKey = {"ID", "NOMBRE"})
-@DataTableInfo(fields = {"ID", "NOMBRE", "SUELDO"}, 
-        classes = {Integer.class, String.class, Integer.class}, 
-        columnNames = {"Nº de Empleado","Nombre", "Sueldo"})
+@DataTableInfo(fields = {"ID", "NOMBRE", "SUELDO"},
+        classes = {Integer.class, String.class, Integer.class},
+        columnNames = {"Nº de Empleado", "Nombre", "Sueldo"})
 @DataDetailInfo(fields = {"NOMBRE", "SUELDO"}, namesShow = {"Nombre", "Sueldo"})
 public class Empleado extends Data {
 
@@ -38,6 +38,12 @@ public class Empleado extends Data {
     public Data copia() {
 
         return new Empleado(this);
+    }
+
+    @Override
+    public String toString() {
+        
+        return this.get("ID") + " - " + this.get("NOMBRE");
     }
 
 }

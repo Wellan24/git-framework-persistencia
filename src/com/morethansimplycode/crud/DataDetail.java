@@ -7,8 +7,10 @@ package com.morethansimplycode.crud;
 
 import com.morethansimplycode.data.Data;
 import com.morethansimplycode.data.DataAnnotationUtil;
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.util.HashMap;
+import java.util.Set;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
@@ -51,8 +53,8 @@ public class DataDetail extends javax.swing.JPanel {
                 textFields.put(field, textField);
                 this.add(textField);
             }
-        }else{
-            
+        } else {
+
             JTextField textField;
             for (int i = 0; i < fields.length; i++) {
 
@@ -74,6 +76,10 @@ public class DataDetail extends javax.swing.JPanel {
     public void setData(Data data) {
 
         this.data = data;
+        if (data != null)
+            fillFields();
+        else
+            cleanFields();
     }
 
     /**
@@ -92,4 +98,22 @@ public class DataDetail extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
+    private void fillFields() {
+
+        Set<String> keys = textFields.keySet();
+
+        keys.stream().forEach((key) -> {
+            textFields.get(key).setText(data.get(key).toString());
+        });
+    }
+
+    private void cleanFields() {
+
+        for (Component c : this.getComponents()) {
+
+            if (c instanceof JTextField)
+                ((JTextField) c).setText("");
+        }
+
+    }
 }

@@ -325,4 +325,58 @@ public class DataManagement {
 
         return dataCache.getCachedData(key);
     }
+
+    /**
+     * This calls commit() method from the connection.
+     * @throws SQLException 
+     */
+    public void commit() throws SQLException {
+        connection.commit();
+    }
+
+    /**
+     * Inserts data.
+     * @param d The data to be inserted.
+     * @return 
+     */
+    public boolean insertData(Data d) {
+        return dataManagementDatabase.insertData(connection, d);
+    }
+
+    /**
+     * Check the data using its primarykey
+     * @param d The Data to check
+     * @return if the Data exists.
+     */
+    public boolean existsByPrimaryKey(Data d) {
+        return dataManagementDatabase.existsByPrimaryKey(connection, d);
+    }
+
+    /**
+     * Check the data using all its columns
+     * @param d The Data to check
+     * @return if the Data exists.
+     */
+    public boolean existsByAllColumns(Data d) {
+        return dataManagementDatabase.existsByAllColumns(connection, d);
+    }
+
+    /**
+     * Check the data using the given columns
+     * @param d The Data to check
+     * @return if the Data exists.
+     */
+    public boolean existsByColumns(String[] columns, Data d) {
+        return dataManagementDatabase.existsByColumns(connection, columns, d);
+    }
+
+    /**
+     * Update the given Data
+     * @param d The Data to update
+     * @return if successfull
+     */
+    public boolean updateDato(Data d) {
+        return dataManagementDatabase.updateDato(d, connection);
+    }   
+    
 }

@@ -26,12 +26,9 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jScrollPane2" min="-2" pref="452" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="dataTab1" pref="379" max="32767" attributes="0"/>
-                  <Component id="dataDetail1" max="32767" attributes="0"/>
-              </Group>
-              <EmptySpace min="-2" pref="96" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="tabDetail" pref="594" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -39,15 +36,14 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Group type="102" alignment="1" attributes="0">
-                      <Component id="dataTab1" min="-2" pref="95" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Component id="dataDetail1" min="-2" pref="60" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="tabDetail" pref="467" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="jScrollPane2" min="-2" pref="340" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="jScrollPane2" min="-2" pref="340" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -74,13 +70,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="com.morethansimplycode.crud.DataTab" name="dataTab1">
+    <Component class="com.morethansimplycode.crud.DataTabDetail" name="tabDetail">
     </Component>
-    <Container class="com.morethansimplycode.crud.DataDetail" name="dataDetail1">
-
-      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
-        <Property name="useNullLayout" type="boolean" value="true"/>
-      </Layout>
-    </Container>
   </SubComponents>
 </Form>
