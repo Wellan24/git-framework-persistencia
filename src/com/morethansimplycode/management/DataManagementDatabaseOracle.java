@@ -76,7 +76,6 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
 
         try {
             Statement statement = connection.createStatement();
-            System.out.println(statement.isClosed());
             return statement.executeQuery(query);
 
         } catch (SQLException ex) {

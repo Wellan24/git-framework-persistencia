@@ -64,7 +64,6 @@ public class DataDetail extends javax.swing.JPanel {
                 this.add(textField);
             }
         }
-        System.out.println(this.getComponentCount());
         this.updateUI();
 
     }

@@ -47,7 +47,6 @@ public class DataManagement {
     public DataManagement(Connection connection) {
         try {
             this.connection = connection;
-            System.out.println(connection.getMetaData().getDatabaseProductName());
             dataManagementDatabase = DataManagementDatabaseFactory
                     .getDataManagementDatabase(connection.getMetaData().getDatabaseProductName());
 
@@ -68,7 +67,6 @@ public class DataManagement {
 
             Class.forName(className);
             this.connection = DriverManager.getConnection(url);
-            System.out.println(connection.getMetaData().getDatabaseProductName());
             dataManagementDatabase = DataManagementDatabaseFactory
                     .getDataManagementDatabase(connection.getMetaData().getDatabaseProductName());
 
@@ -91,7 +89,6 @@ public class DataManagement {
 
             Class.forName(className);
             this.connection = DriverManager.getConnection(url, user, password);
-            System.out.println(connection.getMetaData().getDatabaseProductName());
             dataManagementDatabase = DataManagementDatabaseFactory
                     .getDataManagementDatabase(connection.getMetaData().getDatabaseProductName());
 
@@ -187,7 +184,6 @@ public class DataManagement {
                 p.commit();
 
             top = -1;
-            System.out.println(ret);
             return ret;
         } catch (SQLException | InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(DataManagement.class.getName()).log(Level.SEVERE, null, ex);

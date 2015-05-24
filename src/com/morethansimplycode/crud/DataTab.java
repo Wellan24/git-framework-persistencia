@@ -22,13 +22,11 @@ public class DataTab extends javax.swing.JPanel implements ActionListener {
     private final Timer tLeft = new Timer(6, (e) -> {
         if (DataTab.this.tabContainer.getX() < 0)
             left(5);
-        System.out.println("left" + DataTab.this.tabContainer.getX());
 
     });
     private final Timer tRight = new Timer(6, (e) -> {
         if (DataTab.this.tabContainer.getWidth() >= Math.abs(DataTab.this.tabContainer.getX()) + DataTab.this.panel.getWidth())
             left(-5);
-        System.out.println("right" + DataTab.this.tabContainer.getX());
     });
     
     private DataTabListener listener;
@@ -86,7 +84,6 @@ public class DataTab extends javax.swing.JPanel implements ActionListener {
             DataTabItem item = new DataTabItem(d, 80, 80, this);
             tabContainer.add(item);
             tabContainer.setSize(tabContainer.getWidth() + item.getPreferredSize().width + 10, tabContainer.getHeight());
-            System.out.println(tabContainer.getComponentCount() + " " + item.getSize());
         }
 
         this.updateUI();
@@ -174,9 +171,7 @@ public class DataTab extends javax.swing.JPanel implements ActionListener {
 
     private void resize(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_resize
 
-        System.out.println(tabContainer.getBounds());
         tabContainer.setBounds(tabContainer.getBounds().x, tabContainer.getBounds().y,tabContainer.getBounds().width, panel.getBounds().height);
-        System.out.println(tabContainer.getBounds());
         this.updateUI();
     }//GEN-LAST:event_resize
 
