@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.morethansimplycode.data;
+package com.morethansimplycode.crud;
 
-import com.morethansimplycode.crud.CRUDTableModel;
+import com.morethansimplycode.data.Data;
+import com.morethansimplycode.data.DataAnnotationUtil;
 import java.util.List;
-import javax.swing.event.TableModelListener;
 
 /**
  *

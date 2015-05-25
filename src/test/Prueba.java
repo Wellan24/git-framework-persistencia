@@ -5,8 +5,9 @@
  */
 package test;
 
+import com.morethansimplycode.crud.CRUDTableListener;
 import com.morethansimplycode.data.Data;
-import com.morethansimplycode.data.DataTableModel;
+import com.morethansimplycode.crud.DataTableModel;
 import com.morethansimplycode.management.DataListener;
 import com.morethansimplycode.management.DataManagement;
 import com.morethansimplycode.management.DataProcessor;
@@ -31,15 +32,25 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
                         "jdbc:mysql://192.168.1.15:3306/test", "test", "p@ssw0rd"));
 
         /* Ejemplo de Aync */
-//        SingletonDataManagement.getInstance().addDataListener(this);
-//        SingletonDataManagement.getInstance().recoveryDataAsync(Empleado.class);
+        SingletonDataManagement.getInstance().addDataListener(this);
+        SingletonDataManagement.getInstance().recoveryDataAsync(Empleado.class);
 
         /* Ejemplo sin Async */
-        ArrayList<Data> ds = SingletonDataManagement.getInstance().recoverData(Empleado.class);
-        tabla.setModel(new DataTableModel(Empleado.class, ds));
-        
-        tabDetail.setClassData(Empleado.class);
-        tabDetail.setData(ds);
+//        ArrayList<Data> ds = SingletonDataManagement.getInstance().recoverData(Empleado.class);
+//
+//        // Añadir un modelo
+//        tabla.setModel(new DataTableModel(Empleado.class, ds));
+//
+//        // Añadir un Listener para mostrar los datos seleccionados en la tabla 
+//        // al DataTabDetail
+        tabla.addCRUDTableListener((int newSelectedRow, int newSelectedColumn) -> {
+            tabDetail.setSelectedData(tabla.getCRUDTableModel().getData()[newSelectedRow]);
+        });
+//
+//        // Set the data class for the detail
+//        tabDetail.setClassData(Empleado.class);
+//        // The Data collection to show on the Tab
+//        tabDetail.setData(ds);
     }
 
     /**
@@ -51,9 +62,9 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane2 = new javax.swing.JScrollPane();
-        tabla = new javax.swing.JTable();
         tabDetail = new com.morethansimplycode.crud.DataTabDetail();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tabla = new com.morethansimplycode.crud.CRUDTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -68,7 +79,7 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane2.setViewportView(tabla);
+        jScrollPane1.setViewportView(tabla);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -76,7 +87,7 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(tabDetail, javax.swing.GroupLayout.DEFAULT_SIZE, 594, Short.MAX_VALUE)
                 .addContainerGap())
@@ -86,10 +97,10 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tabDetail, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(tabDetail, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -106,9 +117,9 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
-            
+
             javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-            
+
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Prueba.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
@@ -123,9 +134,9 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane1;
     private com.morethansimplycode.crud.DataTabDetail tabDetail;
-    private javax.swing.JTable tabla;
+    private com.morethansimplycode.crud.CRUDTable tabla;
     // End of variables declaration//GEN-END:variables
 
     /* The listening implementing zone */
@@ -149,6 +160,11 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
         SwingUtilities.invokeLater(() -> {
 
             tabla.setModel(new DataTableModel(Empleado.class, data));
+
+            // Set the data class for the detail
+            tabDetail.setClassData(Empleado.class);
+            // The Data collection to show on the Tab
+            tabDetail.setData(data);
         });
     }
 

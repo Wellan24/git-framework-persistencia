@@ -59,9 +59,10 @@ public class CRUDTable extends JTable {
             });
     }
 
-    public void setCRUDTableModel(CRUDTableModel model) {
+    public void setModel(CRUDTableModel model) {
 
-        this.setModel(model);
+        this.model = model;
+        super.setModel(model);
     }
 
     public ArrayList<CRUDTableListener> getListeners() {

@@ -35,6 +35,10 @@ public class DataTabDetail extends javax.swing.JPanel implements DataTabListener
         tab.setData(data);
     }
 
+    public void setSelectedData(Data data) {
+        detail.setData(data);
+    }
+
     public void setItemSize(int width, int height) {
         tab.setItemSize(width, height);
     }   
