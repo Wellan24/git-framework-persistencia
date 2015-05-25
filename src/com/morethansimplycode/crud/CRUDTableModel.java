@@ -13,27 +13,36 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Oscar
  */
-public abstract class CRUDTableModel extends DefaultTableModel{
-    
+public abstract class CRUDTableModel extends DefaultTableModel {
+
     /**
-     * Use this to set the Data in the Model
-     * Return itself for chain call.
+     * Use this to set the Data in the Model Return itself for chain call.
+     *
      * @param d The data to show
      * @return itself
      */
     public abstract CRUDTableModel setData(Data[] d);
+
     /**
-     * Use this to set the Data in the Model
-     * Return itself for chain call.
+     * Use this to set the Data in the Model Return itself for chain call.
+     *
      * @param d The data to show
      * @return itself
      */
     public abstract CRUDTableModel setData(List<Data> d);
+
     /**
      * Return the data which the model uses
+     *
      * @return an Array of Data
      */
     public abstract Data[] getData();
-    
-    
+
+    /**
+     * Return the data which the model uses
+     *
+     * @return The class of the Data that will show
+     */
+    public abstract Class<? extends Data> getDataClass();
+
 }

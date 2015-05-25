@@ -9,10 +9,11 @@ package com.morethansimplycode.crud;
  *
  * @author Oscar
  */
-public interface CRUDTableListener{
+public interface CRUDTableListener {
 
     /**
      * This method is called when an item is clicked in a table
+     *
      * @param newSelectedRow The new Row
      * @param newSelectedColumn the new Column
      */

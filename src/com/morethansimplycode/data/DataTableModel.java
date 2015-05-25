@@ -15,6 +15,7 @@ import javax.swing.event.TableModelListener;
  */
 public class DataTableModel extends CRUDTableModel {
 
+    private final Class<? extends Data> d;
     private Data[] data;
     private int rowCount;
     private final int columnCount;
@@ -30,6 +31,7 @@ public class DataTableModel extends CRUDTableModel {
         fieldNames = DataAnnotationUtil.recoverTableInfoFields(d);
         columnClasses = DataAnnotationUtil.recoverTableInfoAutoClasses(d);
         columnCount = columnNames.length;
+        this.d = d;
     }
 
     public DataTableModel(Class<? extends Data> d, List<Data> data) {
@@ -40,6 +42,12 @@ public class DataTableModel extends CRUDTableModel {
         fieldNames = DataAnnotationUtil.recoverTableInfoFields(d);
         columnClasses = DataAnnotationUtil.recoverTableInfoAutoClasses(d);
         columnCount = columnNames.length;
+        this.d = d;
+    }
+
+    @Override
+    public Class<? extends Data> getDataClass() {
+        return d;
     }
 
     @Override
