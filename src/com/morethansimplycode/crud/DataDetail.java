@@ -69,6 +69,17 @@ public class DataDetail extends javax.swing.JPanel {
     }
 
     public Data getData() {
+
+        Set<String> keys = textFields.keySet();
+
+        keys.stream().forEach((key) -> {
+
+            if (data.get(key) instanceof Integer)
+                data.put(key, Integer.parseInt(textFields.get(key).getText()));
+            else
+                data.put(key, textFields.get(key).getText());
+        });
+
         return data;
     }
 

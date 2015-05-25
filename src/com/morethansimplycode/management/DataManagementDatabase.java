@@ -42,7 +42,7 @@ public interface DataManagementDatabase {
      * @param d
      * @return True if the insert is successfull or false otherwise.
      */
-    public boolean insertData(Connection connection, Data d);
+    public boolean insertData(Connection connection, Data d, boolean autoNum);
 
     /**
      * This method check if the Data exists in the data base, comparing it with
@@ -149,13 +149,13 @@ public interface DataManagementDatabase {
 
     public StringBuilder createUpdateQuery(Data d);
     
-    public String createSelectQuery(String[] claves, String nombreTabla);
+    public StringBuilder createSelectQuery(String[] claves, String nombreTabla);
     
-    public String createSelectQuery(Class<? extends Data> d);
+    public StringBuilder createSelectQuery(Class<? extends Data> d);
     
-    public String createSelectQuery(Class<? extends Data> d, String where);
+    public StringBuilder createSelectQuery(Class<? extends Data> d, String where);
 
-    public String createSelectQuery(String[] claves, String nombreTabla, String where);
+    public StringBuilder createSelectQuery(String[] claves, String nombreTabla, String where);
 
     public DataManagementDatabase top(int recordsToRecover);
 }

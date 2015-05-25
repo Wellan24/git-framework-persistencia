@@ -117,7 +117,7 @@ public class DataManagement {
     /**
      * Recover an Array of Data of the given class with the given where clausule
      *
-     * @param where The where clausule to use
+     * @param d The Data class to recover from the Table
      * @return An ArrayList&lt;Data&gt; with the recovered Data
      */
     public ArrayList<Data> recoverData(Class<? extends Data> d) {
@@ -139,7 +139,8 @@ public class DataManagement {
     /**
      * Recover an Array of Data of the given class with the given where clausule
      *
-     * @param where The where clausule to use
+     * @param d The Data class to recover from the Table
+     * @param p The DataProcessor to use
      * @return An ArrayList&lt;Data&gt; with the recovered Data
      */
     public ArrayList<Data> recoverData(Class<? extends Data> d, DataProcessor p) {
@@ -151,7 +152,7 @@ public class DataManagement {
      * Recover an Array of Data of the given class with the given where clausule
      *
      * @param d The class to recover the data
-     * @param
+     * @param p The DataProcessor to use
      * @param where The where clausule to use
      * @return An ArrayList&lt;Data&gt; with the recovered Data
      */
@@ -162,7 +163,7 @@ public class DataManagement {
         String tableName = DataAnnotationUtil.recoverDBInfoTableName(d);
 
         try (ResultSet rs = dataManagementDatabase.executeQuery(connection,
-                dataManagementDatabase.top(top).createSelectQuery(keys, tableName, where))) {
+                dataManagementDatabase.top(top).createSelectQuery(keys, tableName, where).toString())) {
 
             Data data;
             while (rs.next()) {
@@ -171,10 +172,10 @@ public class DataManagement {
                 for (String key : keys)
                     data.put(key, rs.getObject(key));
                 if (p != null) {
-                    
+
                     if (p.isValid(data) && p.process(data))
                         ret.add(data);
-                    
+
                 } else {
                     ret.add(data);
                 }
@@ -201,12 +202,12 @@ public class DataManagement {
     public void recoverDataAsync(Class<? extends Data> d, DataListener listener) {
 
         new Thread(() -> {
-            
+
             ArrayList<Data> data = recoverData(d);
-            
+
             if (listener.isListeningClass(d))
                 listener.handleDataRecoveryNotCached(data, null);
-            
+
         }).start();
     }
 
@@ -220,12 +221,12 @@ public class DataManagement {
     public void recoverDataAsync(Class<? extends Data> d, DataListener listener, String where) {
 
         new Thread(() -> {
-            
+
             ArrayList<Data> data = recoverData(d, where);
-            
+
             if (listener.isListeningClass(d))
                 listener.handleDataRecoveryNotCached(data, null);
-            
+
         }).start();
     }
 
@@ -240,12 +241,12 @@ public class DataManagement {
     public void recoverDataAsync(Class<? extends Data> d, DataListener listener, DataProcessor p, String where) {
 
         new Thread(() -> {
-            
-            ArrayList<Data> data = recoverData(d, p , where);
-            
+
+            ArrayList<Data> data = recoverData(d, p, where);
+
             if (listener.isListeningClass(d))
                 listener.handleDataRecoveryNotCached(data, null);
-            
+
         }).start();
     }
 
@@ -262,14 +263,14 @@ public class DataManagement {
     public void recoverDataAsync(Class<? extends Data> d, DataListener listener, DataProcessor p, String where, boolean cached) {
 
         new Thread(() -> {
-            
+
             String tableName = DataAnnotationUtil.recoverDBInfoTableName(d);
-            ArrayList<Data> data = recoverData(d, p , where);
+            ArrayList<Data> data = recoverData(d, p, where);
             addDataToCache(tableName, data);
-            
+
             if (listener.isListeningClass(d))
                 listener.handleDataRecoveryCached(tableName, p);
-            
+
         }).start();
     }
 
@@ -285,13 +286,13 @@ public class DataManagement {
     public void recoverDataAsync(Class<? extends Data> d, DataListener listener, DataProcessor p, String where, String key) {
 
         new Thread(() -> {
-            
-            ArrayList<Data> data = recoverData(d, p , where);
+
+            ArrayList<Data> data = recoverData(d, p, where);
             addDataToCache(key, data);
-            
+
             if (listener.isListeningClass(d))
                 listener.handleDataRecoveryCached(key, p);
-            
+
         }).start();
     }
 
@@ -324,7 +325,8 @@ public class DataManagement {
 
     /**
      * This calls commit() method from the connection.
-     * @throws SQLException 
+     *
+     * @throws SQLException
      */
     public void commit() throws SQLException {
         connection.commit();
@@ -332,15 +334,27 @@ public class DataManagement {
 
     /**
      * Inserts data.
+     *
      * @param d The data to be inserted.
-     * @return 
+     * @return
      */
     public boolean insertData(Data d) {
-        return dataManagementDatabase.insertData(connection, d);
+        return dataManagementDatabase.insertData(connection, d, false);
+    }
+
+    /**
+     * Inserts data.
+     *
+     * @param d The data to be inserted.
+     * @return
+     */
+    public boolean insertAutoNumericData(Data d) {
+        return dataManagementDatabase.insertData(connection, d, true);
     }
 
     /**
      * Check the data using its primarykey
+     *
      * @param d The Data to check
      * @return if the Data exists.
      */
@@ -350,6 +364,7 @@ public class DataManagement {
 
     /**
      * Check the data using all its columns
+     *
      * @param d The Data to check
      * @return if the Data exists.
      */
@@ -359,6 +374,7 @@ public class DataManagement {
 
     /**
      * Check the data using the given columns
+     *
      * @param d The Data to check
      * @return if the Data exists.
      */
@@ -368,11 +384,12 @@ public class DataManagement {
 
     /**
      * Update the given Data
+     *
      * @param d The Data to update
      * @return if successfull
      */
     public boolean updateDato(Data d) {
         return dataManagementDatabase.updateDato(d, connection);
-    }   
-    
+    }
+
 }

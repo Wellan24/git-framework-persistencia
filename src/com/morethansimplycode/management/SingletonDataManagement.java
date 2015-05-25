@@ -60,19 +60,18 @@ public class SingletonDataManagement {
     /**
      * Recover an Array of Data of the given class with the given where clausule
      *
-     * @param where
+     * @param d The Data class to recover from the Table
      * @return An ArrayList&lt;Data&gt; with the recovered Data
      */
     public ArrayList<Data> recoverData(Class<? extends Data> d) {
 
         return dataManagment.recoverData(d);
     }
-    
-    
-    
+
     /**
      * Recover an Array of Data of the given class with the given where clausule
      *
+     * @param d The Data class to recover from the Table
      * @param where
      * @return An ArrayList&lt;Data&gt; with the recovered Data
      */
@@ -86,7 +85,7 @@ public class SingletonDataManagement {
      * call all the DataListeners of the Class recovered or Data.class, using
      * handleDataRecoveryNotCached
      *
-     * @param where The where clausule
+     * @param d The Data class to recover from the Table
      */
     public SingletonDataManagement recoveryDataAsync(Class<? extends Data> d) {
 
@@ -99,6 +98,7 @@ public class SingletonDataManagement {
      * call all the DataListeners of the Class recovered or Data.class, using
      * handleDataRecoveryNotCached
      *
+     * @param d The Data class to recover from the Table
      * @param where The where clausule
      */
     public SingletonDataManagement recoveryDataAsync(Class<? extends Data> d, String where) {
@@ -112,6 +112,7 @@ public class SingletonDataManagement {
      * call all the DataListeners of the Class recovered or Data.class, using
      * handleDataRecoveryNotCached
      *
+     * @param d The Data class to recover from the Table
      * @param p The processor
      * @param where The where clausule
      */
@@ -127,6 +128,7 @@ public class SingletonDataManagement {
      * handleDataRecoveryCached if cached is true and
      * handleDataRecoveryNotCached if cached is false
      *
+     * @param d The Data class to recover from the Table
      * @param p The processor
      * @param where The where clausule
      * @param cached True if cached with the table name or no
@@ -142,6 +144,7 @@ public class SingletonDataManagement {
      * call all the DataListeners of the Class recovered or Data.class, using
      * handleDataRecoveryCached
      *
+     * @param d The Data class to recover from the Table
      * @param p The processor
      * @param where The where clausule
      * @param key The key used to cache the data
@@ -180,7 +183,7 @@ class DataListenerImpl implements DataListener {
     @Override
     public boolean isListeningClass(Class<? extends Data> dataClass) {
 
-        listeningDataClass = dataClass;        
+        listeningDataClass = dataClass;
         return dataClass.equals(listenedDataClass) || dataClass.getSuperclass().equals(listenedDataClass);
     }
 

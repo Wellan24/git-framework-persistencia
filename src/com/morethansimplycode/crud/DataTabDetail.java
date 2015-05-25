@@ -43,6 +43,10 @@ public class DataTabDetail extends javax.swing.JPanel implements DataTabListener
         
         tab.setData(data);
     }
+
+    public Data getData() {
+        return detail.getData();
+    }
     
     /** This method is called from within the constructor to
      * initialize the form.

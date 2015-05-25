@@ -53,9 +53,9 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
     @Override
     public int executeNonQuery(Connection connection, String query) {
 
-        try (Statement statement = connection.createStatement()) {
+        try (Statement localStatement = connection.createStatement()) {
 
-            return statement.executeUpdate(query);
+            return localStatement.executeUpdate(query);
 
         } catch (SQLException ex) {
             Logger.getLogger(DataManagementDatabaseMysql.class.getName()).log(Level.SEVERE, null, ex);
@@ -94,10 +94,11 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
      *
      * @param connection
      * @param d
+     * @param autoNum
      * @return True if the insert is successfull or false otherwise.
      */
     @Override
-    public boolean insertData(Connection connection, Data d) {
+    public boolean insertData(Connection connection, Data d, boolean autoNum) {
 
         StringBuilder text = createInsertQuery(d, DataAnnotationUtil.recoverDBInfoColumns(d.getClass()));
         executeNonQuery(connection, text.toString());
@@ -108,14 +109,14 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
      * This method check if the Data exists in the data base, comparing it with
      * the PrimaryKeys
      *
-     * @param connection
+     * @param connection The connection to use
      * @param d
      * @return True if it exists, false if not
      */
     @Override
     public boolean existsByPrimaryKey(Connection connection, Data d) {
 
-        try (Statement statement = connection.createStatement()) {
+        try (Statement localStatement = connection.createStatement()) {
 
             String[] primaryKeys = DataAnnotationUtil.recoverDBInfoPrimaryKeys(d.getClass());
 
@@ -124,7 +125,7 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
                 values[i] = d.get(primaryKeys[i]);
 
             createSelectQueryByPrimaryKey(d.getClass(), "true", values);
-            ResultSet rs = statement.executeQuery("");
+            ResultSet rs = localStatement.executeQuery("");
             return rs.next();
 
         } catch (SQLException ex) {
@@ -137,7 +138,7 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
      * This method check if the Data exists in the data base, comparing it using
      * all the keys.
      *
-     * @param connection
+     * @param connection The connection to use
      * @param d
      * @return True if the Data exists, false if not
      */
@@ -152,7 +153,7 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
      * This method check if the Data exists in the data base, comparing it using
      * the given keys.
      *
-     * @param connection
+     * @param connection The connection to use
      * @param d
      * @param columns
      * @return True if the Data exists, false if not
@@ -160,14 +161,14 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
     @Override
     public boolean existsByColumns(Connection connection, String[] columns, Data d) {
 
-        try (Statement statement = connection.createStatement()) {
+        try (Statement localStatement = connection.createStatement()) {
 
             Object[] values = new Object[columns.length];
 
             for (int i = 0; i < values.length; i++)
                 values[i] = d.get(columns[i]);
 
-            ResultSet rs = statement.executeQuery(createSelectQueryByColumns(d.getClass(), "true", columns, values).toString());
+            ResultSet rs = localStatement.executeQuery(createSelectQueryByColumns(d.getClass(), "true", columns, values).toString());
             return rs.next();
 
         } catch (SQLException ex) {
@@ -176,39 +177,45 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
         return false;
     }
 
+    /**
+     * Creates a Select Query with this format: "Select ${selectColumns} from
+     * ${table}
+     *
+     * @param keys The columns to use in the Select
+     * @param tableName The name of the table to use in the Select
+     * @return A String builder with the text of the query.
+     */
     @Override
-    public String createSelectQuery(String[] claves, String nombreTabla) {
+    public StringBuilder createSelectQuery(String[] keys, String tableName) {
 
-        StringBuilder text = new StringBuilder("Select ");
-
-        for (String clave : claves) {
-
-            text.append(clave).append(",");
-        }
-
-        text.replace(text.length() - 1, text.length(), " from " + nombreTabla);
-
-        addTop(text);
-
-        return text.toString();
+        return createSelectQuery(keys, tableName, null);
     }
 
+    /**
+     * Creates a Select Query with this format: "Select ${selectColumns} from
+     * ${table}
+     *
+     * @param keys The columns to use in the Select
+     * @param tableName The name of the table to use in the Select
+     * @param where The where to use in the Select
+     * @return A String builder with the text of the query.
+     */
     @Override
-    public String createSelectQuery(String[] claves, String nombreTabla, String where) {
+    public StringBuilder createSelectQuery(String[] keys, String tableName, String where) {
 
         StringBuilder text = new StringBuilder("Select ");
 
-        for (String clave : claves)
+        for (String clave : keys)
             text.append(clave).append(",");
 
         text.replace(text.length() - 1, text.length(), " from ");
-        text.append(nombreTabla).append(" ");
+        text.append(tableName).append(" ");
 
         if (where != null && !where.isEmpty())
             text.append(" where ").append(where);
 
         addTop(text);
-        return text.toString();
+        return text;
     }
 
     /**
@@ -339,6 +346,18 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
     }
 
     /**
+     * Creates a Insert Query.
+     *
+     * @param d
+     * @param keys
+     * @return An StringBuilder with the text of the Query
+     */
+    public StringBuilder createAutoNumericInsertQuery(Data d, String[] keys) {
+
+        return createInsertQuery(d, keys, true);
+    }
+
+    /**
      * Creates a Insert Query with autonumeric key defined in DataDBInfo
      * annotation
      *
@@ -390,6 +409,13 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
         return textoSentencia;
     }
 
+    /**
+     * Updates a Data object
+     *
+     * @param d The Data to update
+     * @param connection The connection to use
+     * @return
+     */
     @Override
     public boolean updateDato(Data d, Connection connection) {
 
@@ -401,6 +427,12 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
         return false;
     }
 
+    /**
+     * Creates the update Query to this Data object
+     *
+     * @param d The Data to update
+     * @return
+     */
     @Override
     public StringBuilder createUpdateQuery(Data d) {
 
@@ -452,14 +484,35 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
         }
     }
 
+    /**
+     * Creates a Select Query with this format: "Select ${selectColumns} from
+     * ${table}
+     *
+     * @param d The Data class to Select
+     * @return A String builder with the text of the query.
+     */
     @Override
-    public String createSelectQuery(Class<? extends Data> d) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public StringBuilder createSelectQuery(Class<? extends Data> d) {
+
+        String[] keys = DataAnnotationUtil.recoverDBInfoColumns(d);
+        String tableName = DataAnnotationUtil.recoverDBInfoTableName(d);
+        return createSelectQuery(keys, tableName);
     }
 
+    /**
+     * Creates a Select Query with this format: "Select ${selectColumns} from
+     * ${table}
+     *
+     * @param d The Data class to Select
+     * @param where The where to use in the Select
+     * @return A String builder with the text of the query.
+     */
     @Override
-    public String createSelectQuery(Class<? extends Data> d, String where) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public StringBuilder createSelectQuery(Class<? extends Data> d, String where) {
+
+        String[] keys = DataAnnotationUtil.recoverDBInfoColumns(d);
+        String tableName = DataAnnotationUtil.recoverDBInfoTableName(d);
+        return createSelectQuery(keys, tableName, where);
     }
 
 }
