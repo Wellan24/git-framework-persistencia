@@ -70,4 +70,14 @@ public final class DataCache {
 
         cache.put(key, data);
     }
+
+    /**
+     * This method that returns a copy of the cache.
+     *
+     * @return A new HashMap&lt;String, ArrayList&lt;Data&gt;&gt;
+     */
+    public HashMap<String, ArrayList<Data>> copyCache() {
+        return new HashMap<>(cache);
+    }
+
 }
