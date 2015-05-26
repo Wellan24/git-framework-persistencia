@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 
 /**
  * The purpose of this class is to give a bunch of general methods to Data
- * persistence
+ * persistence in MySQL
  *
  * @author Oscar
  */

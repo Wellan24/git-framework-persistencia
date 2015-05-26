@@ -37,8 +37,9 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
      */
     public static DataManagementDatabase getInstance() {
 
-        if (instance == null)
+        if (instance == null) {
             instance = new DataManagementDatabaseMysql();
+        }
 
         return instance;
     }
@@ -121,8 +122,9 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
             String[] primaryKeys = DataAnnotationUtil.recoverDBInfoPrimaryKeys(d.getClass());
 
             Object[] values = new Object[primaryKeys.length];
-            for (int i = 0; i < values.length; i++)
+            for (int i = 0; i < values.length; i++) {
                 values[i] = d.get(primaryKeys[i]);
+            }
 
             createSelectQueryByPrimaryKey(d.getClass(), "true", values);
             ResultSet rs = localStatement.executeQuery("");
@@ -165,8 +167,9 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
 
             Object[] values = new Object[columns.length];
 
-            for (int i = 0; i < values.length; i++)
+            for (int i = 0; i < values.length; i++) {
                 values[i] = d.get(columns[i]);
+            }
 
             ResultSet rs = localStatement.executeQuery(createSelectQueryByColumns(d.getClass(), "true", columns, values).toString());
             return rs.next();
@@ -205,14 +208,16 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
 
         StringBuilder text = new StringBuilder("Select ");
 
-        for (String clave : keys)
+        for (String clave : keys) {
             text.append(clave).append(",");
+        }
 
         text.replace(text.length() - 1, text.length(), " from ");
         text.append(tableName).append(" ");
 
-        if (where != null && !where.isEmpty())
+        if (where != null && !where.isEmpty()) {
             text.append(" where ").append(where);
+        }
 
         addTop(text);
         return text;
@@ -222,9 +227,10 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
      * Creates a Select Query with this format: "Select ${selectColumns} from
      * ${table} where whereColumns[i] = ${columnValue} [, ...]
      *
-     * @param selectColumns
-     * @param whereColumns
-     * @param d
+     * @param d The class to use
+     * @param selectColumns The columns to Select
+     * @param whereColumns The Columns in the where
+     * @param valuesWhereColumns The values of the Columns in the where
      * @return A String builder with the text of the query.
      */
     @Override
@@ -239,13 +245,15 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
             String primaryKey = whereColumns[i];
             Object value = valuesWhereColumns[i];
 
-            if (value instanceof String)
+            if (value instanceof String) {
                 text.append(primaryKey).append(" = '").append(value).append("'");
-            else
+            } else {
                 text.append(primaryKey).append(" = ").append(value);
+            }
 
-            if (i != whereColumns.length - 1)
+            if (i != whereColumns.length - 1) {
                 text.append(",");
+            }
         }
 
         addTop(text);
@@ -258,9 +266,10 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
      * ${selectColumns}) from ${table} where whereColumns[i] = ${columnValue} [,
      * ...]
      *
-     * @param selectColumns
-     * @param whereColumns
-     * @param d
+     * @param d The class to use
+     * @param selectColumns The columns to Select
+     * @param whereColumns The Columns in the where
+     * @param valuesWhereColumns The values of the Columns in the where
      * @return A String builder with the text of the query.
      */
     @Override
@@ -273,8 +282,9 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
      * Creates a Select Query with this format: "Select ${columns} from ${table}
      * where primaryKey[i] = ${columnValue} [, ...]
      *
-     * @param columns
-     * @param d
+     * @param d The class to use
+     * @param columns The columns to Select
+     * @param primaryKeyValues The values of the primary key/keys
      * @return A String builder with the text of the query.
      */
     @Override
@@ -291,13 +301,15 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
             String primaryKey = primaryKeys[i];
             Object value = primaryKeyValues[i];
 
-            if (value instanceof String)
+            if (value instanceof String) {
                 text.append(primaryKey).append(" = '").append(value).append("'");
-            else
+            } else {
                 text.append(primaryKey).append(" = ").append(value);
+            }
 
-            if (i != primaryKeys.length - 1)
+            if (i != primaryKeys.length - 1) {
                 text.append(",");
+            }
         }
 
         addTop(text);
@@ -310,8 +322,9 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
      * String.join(",",${columns}) from ${table} where primaryKey[i] =
      * ${columnValue} [, ...]
      *
-     * @param columns The columns you want to select
      * @param d The class of the data to select
+     * @param columns The columns you want to select
+     * @param primaryKeyValues The values of the primary key/keys
      * @return A String builder with the text of the query.
      */
     @Override
@@ -335,8 +348,8 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
     /**
      * Creates a Insert Query.
      *
-     * @param d
-     * @param keys
+     * @param d The class of the data to select
+     * @param keys The keys to use in the insert
      * @return An StringBuilder with the text of the Query
      */
     @Override
@@ -348,8 +361,8 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
     /**
      * Creates a Insert Query.
      *
-     * @param d
-     * @param keys
+     * @param d The class of the data to select
+     * @param keys The keys to use in the insert
      * @return An StringBuilder with the text of the Query
      */
     public StringBuilder createAutoNumericInsertQuery(Data d, String[] keys) {
@@ -361,9 +374,9 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
      * Creates a Insert Query with autonumeric key defined in DataDBInfo
      * annotation
      *
-     * @param d
-     * @param keys
-     * @param auto
+     * @param d The class of the data to select
+     * @param keys The keys to use in the insert
+     * @param auto If it have autonumeric values
      * @return An StringBuilder with the text of the Query
      */
     @Override
@@ -374,35 +387,38 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
         textoSentencia.append("(");
         List<String> autoNumKeys = Arrays.asList(DataAnnotationUtil.recoverDBInfoAutoNumKeys(d.getClass()));
 
-        if (keys == null)
+        if (keys == null) {
             keys = DataAnnotationUtil.recoverDBInfoColumns(d.getClass());
+        }
 
         for (String clave : keys) {
 
-            if (!autoNumKeys.contains(clave))
+            if (!autoNumKeys.contains(clave)) {
                 textoSentencia.append(clave).append(",");
+            }
         }
         textoSentencia.replace(textoSentencia.length() - 1, textoSentencia.length(), ")");
         textoSentencia.append(" VALUES(");
         for (String clave : keys) {
+            if (!autoNumKeys.contains(clave)) {
+                Object rec = d.get(clave);
+                if (rec instanceof String || rec instanceof LocalDate) {
 
-            Object rec = d.get(clave);
-            if (rec instanceof String || rec instanceof LocalDate) {
+                    textoSentencia.append("'");
+                    textoSentencia.append(rec.toString());
+                    textoSentencia.append("'");
+                } else if (rec instanceof Integer) {
 
-                textoSentencia.append("'");
-                textoSentencia.append(rec.toString());
-                textoSentencia.append("'");
-            } else if (rec instanceof Integer) {
+                    textoSentencia.append(rec);
+                } else if (rec instanceof Float) {
 
-                textoSentencia.append(rec);
-            } else if (rec instanceof Float) {
+                    textoSentencia.append(rec);
+                } else {
 
-                textoSentencia.append(rec);
-            } else {
-
-                textoSentencia.append(rec);
+                    textoSentencia.append(rec);
+                }
+                textoSentencia.append(" ,");
             }
-            textoSentencia.append(" ,");
         }
         textoSentencia.replace(textoSentencia.length() - 2, textoSentencia.length(), ");");
 
