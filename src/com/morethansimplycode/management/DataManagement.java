@@ -12,6 +12,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,7 +21,7 @@ import java.util.logging.Logger;
  *
  * @author Oscar
  */
-public class DataManagement {
+public class DataManagement implements AutoCloseable {
 
     /**
      * The Connection used to connect to the required DataBase.
@@ -97,6 +98,12 @@ public class DataManagement {
         }
     }
 
+    /**
+     * Adds top clausule to the Selects
+     *
+     * @param top
+     * @return The instance to allow chains
+     */
     public DataManagement top(int top) {
 
         this.top = top;
@@ -128,6 +135,7 @@ public class DataManagement {
     /**
      * Recover an Array of Data of the given class with the given where clausule
      *
+     * @param d The Data class to recover from the Table
      * @param where The where clausule to use
      * @return An ArrayList&lt;Data&gt; with the recovered Data
      */
@@ -169,20 +177,23 @@ public class DataManagement {
             while (rs.next()) {
 
                 data = d.newInstance();
-                for (String key : keys)
+                for (String key : keys) {
                     data.put(key, rs.getObject(key));
+                }
                 if (p != null) {
 
-                    if (p.isValid(data) && p.process(data))
+                    if (p.isValid(data) && p.process(data)) {
                         ret.add(data);
+                    }
 
                 } else {
                     ret.add(data);
                 }
             }
 
-            if (p != null)
+            if (p != null) {
                 p.commit();
+            }
 
             top = -1;
             return ret;
@@ -197,6 +208,7 @@ public class DataManagement {
      * This method uses ArrayList&lt;Data&gt; in a separated Thread and then
      * gives it to a DataListener, using handleDataRecoveryNotCached
      *
+     * @param d The class to recover the data
      * @param listener The listener of the method
      */
     public void recoverDataAsync(Class<? extends Data> d, DataListener listener) {
@@ -205,10 +217,9 @@ public class DataManagement {
 
             ArrayList<Data> data = recoverData(d);
 
-            if (listener.isListeningClass(d)){
+            if (listener.isListeningClass(d)) {
                 listener.handleDataRecoveryNotCached(data, null);
             }
-            
 
         }).start();
     }
@@ -217,6 +228,7 @@ public class DataManagement {
      * This method uses ArrayList&lt;Data&gt; in a separated Thread and then
      * gives it to a DataListener, using handleDataRecoveryNotCached
      *
+     * @param d The class to recover the data
      * @param listener The listener of the method
      * @param where The where clausule
      */
@@ -226,8 +238,9 @@ public class DataManagement {
 
             ArrayList<Data> data = recoverData(d, where);
 
-            if (listener.isListeningClass(d))
+            if (listener.isListeningClass(d)) {
                 listener.handleDataRecoveryNotCached(data, null);
+            }
 
         }).start();
     }
@@ -236,6 +249,7 @@ public class DataManagement {
      * This method uses ArrayList&lt;Data&gt; in a separated Thread and then
      * gives it to a DataListener, using handleDataRecoveryNotCached
      *
+     * @param d The class to recover the data
      * @param listener The listener of the method
      * @param p The processor
      * @param where The where clausule
@@ -246,8 +260,9 @@ public class DataManagement {
 
             ArrayList<Data> data = recoverData(d, p, where);
 
-            if (listener.isListeningClass(d))
+            if (listener.isListeningClass(d)) {
                 listener.handleDataRecoveryNotCached(data, null);
+            }
 
         }).start();
     }
@@ -257,6 +272,7 @@ public class DataManagement {
      * gives it to a DataListener, using handleDataRecoveryCached if cached is
      * true and handleDataRecoveryNotCached if cached is false
      *
+     * @param d The class to recover the data
      * @param listener The listener of the method
      * @param p The processor
      * @param where The where clausule
@@ -270,8 +286,9 @@ public class DataManagement {
             ArrayList<Data> data = recoverData(d, p, where);
             addDataToCache(tableName, data);
 
-            if (listener.isListeningClass(d))
+            if (listener.isListeningClass(d)) {
                 listener.handleDataRecoveryCached(tableName, p);
+            }
 
         }).start();
     }
@@ -280,6 +297,7 @@ public class DataManagement {
      * This method uses ArrayList&lt;Data&gt; in a separated Thread and then
      * gives it to a DataListener, using handleDataRecoveryCached
      *
+     * @param d The class to recover the data
      * @param listener The listener of the method
      * @param p The processor
      * @param where The where clausule
@@ -292,8 +310,9 @@ public class DataManagement {
             ArrayList<Data> data = recoverData(d, p, where);
             addDataToCache(key, data);
 
-            if (listener.isListeningClass(d))
+            if (listener.isListeningClass(d)) {
                 listener.handleDataRecoveryCached(key, p);
+            }
 
         }).start();
     }
@@ -308,8 +327,9 @@ public class DataManagement {
      */
     private void addDataToCache(String key, ArrayList<Data> data) {
 
-        if (dataCache == null)
+        if (dataCache == null) {
             dataCache = new DataCache();
+        }
 
         dataCache.putCacheData(key, data);
     }
@@ -377,6 +397,7 @@ public class DataManagement {
     /**
      * Check the data using the given columns
      *
+     * @param columns The columns to use to check if exists
      * @param d The Data to check
      * @return if the Data exists.
      */
@@ -394,4 +415,30 @@ public class DataManagement {
         return dataManagementDatabase.updateDato(d, connection);
     }
 
+    /**
+     * This method close the connection of this object and clear its cache. If
+     * you want to keep the cache, use the method copyCache()
+     *
+     * @throws Exception
+     */
+    @Override
+    public void close() throws Exception {
+
+        this.dataCache.clearCache();
+        this.connection.close();
+
+        this.dataManagementDatabase = null;
+        this.dataCache = null;
+        this.connection = null;
+    }
+
+    /**
+     * This method that returns a copy of the cache.
+     *
+     * @return A new HashMap&lt;String, ArrayList&lt;Data&gt;&gt;
+     */
+    public HashMap<String, ArrayList<Data>> copyCache() {
+        return dataCache.copyCache();
+    }
+    
 }
