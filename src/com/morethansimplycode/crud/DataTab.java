@@ -6,6 +6,7 @@
 package com.morethansimplycode.crud;
 
 import com.morethansimplycode.data.Data;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -31,6 +32,8 @@ public class DataTab extends javax.swing.JPanel implements ActionListener {
 
     private DataTabListener listener;
     private Data[] data;
+    private DataTabItem selectedItem;
+    private int selectedIndex = -1;
 
     /**
      * Creates new form DataTab
@@ -160,10 +163,49 @@ public class DataTab extends javax.swing.JPanel implements ActionListener {
 
     private void bRightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bRightActionPerformed
 
+        if (selectedIndex < data.length - 1 && selectedIndex >= -1) {
+
+            if (selectedItem != null) {
+                selectedItem.setButtonBackground(Color.WHITE);
+            }
+            selectedIndex++;
+            selectedItem = (DataTabItem) tabContainer.getComponent(selectedIndex);
+            if (selectedItem != null) {
+                selectedItem.setButtonBackground(Color.BLACK);
+                selectedIndex = getDataTabIndex(selectedItem);
+            }
+            callListener();
+        }
 
     }//GEN-LAST:event_bRightActionPerformed
 
     private void bLeftActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bLeftActionPerformed
+
+        if (selectedIndex > 0) {
+
+            if (selectedItem != null) {
+                selectedItem.setButtonBackground(Color.WHITE);
+            }
+            selectedIndex--;
+            selectedItem = (DataTabItem) tabContainer.getComponent(selectedIndex);
+            if (selectedItem != null) {
+                selectedItem.setButtonBackground(Color.BLACK);
+                selectedIndex = getDataTabIndex(selectedItem);
+            }
+            callListener();
+        } else if (selectedIndex == -1) {
+
+            if (selectedItem != null) {
+                selectedItem.setButtonBackground(Color.WHITE);
+            }
+            selectedIndex = data.length - 1;
+            selectedItem = (DataTabItem) tabContainer.getComponent(selectedIndex);
+            if (selectedItem != null) {
+                selectedItem.setButtonBackground(Color.BLACK);
+                selectedIndex = getDataTabIndex(selectedItem);
+            }
+            callListener();
+        }
 
 
     }//GEN-LAST:event_bLeftActionPerformed
@@ -211,8 +253,34 @@ public class DataTab extends javax.swing.JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
+        if (selectedItem != null) {
+            selectedItem.setButtonBackground(Color.WHITE);
+
+        }
+
+        selectedItem = (DataTabItem) tabContainer.getComponentAt(((DataTabItem) e.getSource()).getLocation());
+        if (selectedItem != null) {
+            selectedItem.setButtonBackground(Color.BLACK);
+            selectedIndex = getDataTabIndex(selectedItem);
+        }
+
+        callListener();
+    }
+
+    public void callListener() {
+
         if (listener != null)
-            listener.selectionChanged(((DataTabItem) e.getSource()).value);
+            listener.selectionChanged(selectedItem.value);
+    }
+
+    public int getDataTabIndex(DataTabItem item) {
+
+        for (int i = 0; i < data.length; i++) {
+
+            if (data[i].equals(item.value))
+                return i;
+        }
+        return -1;
     }
 
 }

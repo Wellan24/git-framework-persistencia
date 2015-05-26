@@ -6,6 +6,7 @@
 package com.morethansimplycode.crud;
 
 import com.morethansimplycode.data.Data;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,6 +46,12 @@ public final class DataTabItem extends javax.swing.JPanel {
         button.setPreferredSize(new Dimension(width, height));
         this.setPreferredSize(new Dimension(width, height));
     }
+
+    
+    public void setButtonBackground(Color bg) {
+        button.setBackground(bg);
+    }    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
