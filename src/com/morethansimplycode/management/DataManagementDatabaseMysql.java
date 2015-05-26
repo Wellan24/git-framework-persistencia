@@ -37,8 +37,9 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
      */
     public static DataManagementDatabase getInstance() {
 
-        if (instance == null)
+        if (instance == null) {
             instance = new DataManagementDatabaseMysql();
+        }
 
         return instance;
     }
@@ -121,8 +122,9 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
             String[] primaryKeys = DataAnnotationUtil.recoverDBInfoPrimaryKeys(d.getClass());
 
             Object[] values = new Object[primaryKeys.length];
-            for (int i = 0; i < values.length; i++)
+            for (int i = 0; i < values.length; i++) {
                 values[i] = d.get(primaryKeys[i]);
+            }
 
             createSelectQueryByPrimaryKey(d.getClass(), "true", values);
             ResultSet rs = localStatement.executeQuery("");
@@ -165,8 +167,9 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
 
             Object[] values = new Object[columns.length];
 
-            for (int i = 0; i < values.length; i++)
+            for (int i = 0; i < values.length; i++) {
                 values[i] = d.get(columns[i]);
+            }
 
             ResultSet rs = localStatement.executeQuery(createSelectQueryByColumns(d.getClass(), "true", columns, values).toString());
             return rs.next();
@@ -205,14 +208,16 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
 
         StringBuilder text = new StringBuilder("Select ");
 
-        for (String clave : keys)
+        for (String clave : keys) {
             text.append(clave).append(",");
+        }
 
         text.replace(text.length() - 1, text.length(), " from ");
         text.append(tableName).append(" ");
 
-        if (where != null && !where.isEmpty())
+        if (where != null && !where.isEmpty()) {
             text.append(" where ").append(where);
+        }
 
         addTop(text);
         return text;
@@ -239,13 +244,15 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
             String primaryKey = whereColumns[i];
             Object value = valuesWhereColumns[i];
 
-            if (value instanceof String)
+            if (value instanceof String) {
                 text.append(primaryKey).append(" = '").append(value).append("'");
-            else
+            } else {
                 text.append(primaryKey).append(" = ").append(value);
+            }
 
-            if (i != whereColumns.length - 1)
+            if (i != whereColumns.length - 1) {
                 text.append(",");
+            }
         }
 
         addTop(text);
@@ -291,13 +298,15 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
             String primaryKey = primaryKeys[i];
             Object value = primaryKeyValues[i];
 
-            if (value instanceof String)
+            if (value instanceof String) {
                 text.append(primaryKey).append(" = '").append(value).append("'");
-            else
+            } else {
                 text.append(primaryKey).append(" = ").append(value);
+            }
 
-            if (i != primaryKeys.length - 1)
+            if (i != primaryKeys.length - 1) {
                 text.append(",");
+            }
         }
 
         addTop(text);
@@ -374,35 +383,41 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
         textoSentencia.append("(");
         List<String> autoNumKeys = Arrays.asList(DataAnnotationUtil.recoverDBInfoAutoNumKeys(d.getClass()));
 
-        if (keys == null)
+        if (keys == null) {
             keys = DataAnnotationUtil.recoverDBInfoColumns(d.getClass());
+        }
 
         for (String clave : keys) {
 
-            if (!autoNumKeys.contains(clave))
+            if (!autoNumKeys.contains(clave)) {
                 textoSentencia.append(clave).append(",");
+            }
         }
+
         textoSentencia.replace(textoSentencia.length() - 1, textoSentencia.length(), ")");
         textoSentencia.append(" VALUES(");
+
         for (String clave : keys) {
 
-            Object rec = d.get(clave);
-            if (rec instanceof String || rec instanceof LocalDate) {
+            if (!autoNumKeys.contains(clave)) {
+                Object rec = d.get(clave);
+                if (rec instanceof String || rec instanceof LocalDate) {
 
-                textoSentencia.append("'");
-                textoSentencia.append(rec.toString());
-                textoSentencia.append("'");
-            } else if (rec instanceof Integer) {
+                    textoSentencia.append("'");
+                    textoSentencia.append(rec.toString());
+                    textoSentencia.append("'");
+                } else if (rec instanceof Integer) {
 
-                textoSentencia.append(rec);
-            } else if (rec instanceof Float) {
+                    textoSentencia.append(rec);
+                } else if (rec instanceof Float) {
 
-                textoSentencia.append(rec);
-            } else {
+                    textoSentencia.append(rec);
+                } else {
 
-                textoSentencia.append(rec);
+                    textoSentencia.append(rec);
+                }
+                textoSentencia.append(" ,");
             }
-            textoSentencia.append(" ,");
         }
         textoSentencia.replace(textoSentencia.length() - 2, textoSentencia.length(), ");");
 
