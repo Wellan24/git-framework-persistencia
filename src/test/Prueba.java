@@ -5,7 +5,6 @@
  */
 package test;
 
-import com.morethansimplycode.crud.CRUDTableListener;
 import com.morethansimplycode.data.Data;
 import com.morethansimplycode.crud.DataTableModel;
 import com.morethansimplycode.management.DataListener;
@@ -33,24 +32,21 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
 
         /* Ejemplo de Aync */
         SingletonDataManagement.getInstance().addDataListener(this);
-        SingletonDataManagement.getInstance().recoveryDataAsync(Empleado.class);
+        SingletonDataManagement.getInstance().recoveryDataAsync(Empleado1.class);
 
         /* Ejemplo sin Async */
-//        ArrayList<Data> ds = SingletonDataManagement.getInstance().recoverData(Empleado.class);
+//        ArrayList<Data> ds = SingletonDataManagement.getInstance().recoverData(Empleado1.class);
 //
 //        // Añadir un modelo
-//        tabla.setModel(new DataTableModel(Empleado.class, ds));
-//
-//        // Añadir un Listener para mostrar los datos seleccionados en la tabla 
-//        // al DataTabDetail
+//        tabla.setModel(new DataTableModel(Empleado1.class, ds));
+//        tabDetail.setClassData(Empleado1.class);
+//        tabDetail.setData(ds);
+        
+        // Añadir un Listener para mostrar los datos seleccionados en la tabla 
+        // al DataTabDetail
         tabla.addCRUDTableListener((int newSelectedRow, int newSelectedColumn) -> {
             tabDetail.setSelectedData(tabla.getCRUDTableModel().getData()[newSelectedRow]);
         });
-//
-//        // Set the data class for the detail
-//        tabDetail.setClassData(Empleado.class);
-//        // The Data collection to show on the Tab
-//        tabDetail.setData(ds);
     }
 
     /**
@@ -68,17 +64,6 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        tabla.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
         jScrollPane1.setViewportView(tabla);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -97,11 +82,9 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(tabDetail, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tabDetail, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(76, Short.MAX_VALUE))
         );
 
         pack();
@@ -141,6 +124,7 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
 
     /* The listening implementing zone */
     private final Class clase = Empleado.class;
+    private final Class clase1 = Empleado1.class;
 
     @Override
     public Class<? extends Data> getClassforHandle() {
@@ -151,7 +135,7 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
     @Override
     public boolean isListeningClass(Class<? extends Data> dataClass) {
 
-        return clase.equals(dataClass);
+        return clase.equals(dataClass) || clase1.equals(dataClass);
     }
 
     @Override
@@ -159,10 +143,10 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
 
         SwingUtilities.invokeLater(() -> {
 
-            tabla.setModel(new DataTableModel(Empleado.class, data));
+            tabla.setModel(new DataTableModel(Empleado1.class, data));
 
             // Set the data class for the detail
-            tabDetail.setClassData(Empleado.class);
+            tabDetail.setClassData(Empleado1.class);
             // The Data collection to show on the Tab
             tabDetail.setData(data);
         });

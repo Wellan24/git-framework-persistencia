@@ -205,8 +205,10 @@ public class DataManagement {
 
             ArrayList<Data> data = recoverData(d);
 
-            if (listener.isListeningClass(d))
+            if (listener.isListeningClass(d)){
                 listener.handleDataRecoveryNotCached(data, null);
+            }
+            
 
         }).start();
     }

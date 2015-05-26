@@ -28,7 +28,7 @@ public class DataTab extends javax.swing.JPanel implements ActionListener {
         if (DataTab.this.tabContainer.getWidth() >= Math.abs(DataTab.this.tabContainer.getX()) + DataTab.this.panel.getWidth())
             left(-5);
     });
-    
+
     private DataTabListener listener;
     private Data[] data;
 
@@ -36,25 +36,25 @@ public class DataTab extends javax.swing.JPanel implements ActionListener {
      * Creates new form DataTab
      */
     public DataTab() {
-        
-        initComponents();        
+
+        initComponents();
     }
 
     public DataTabListener getListener() {
         return listener;
     }
 
-    public void setItemSize(int width,int height){
-        
+    public void setItemSize(int width, int height) {
+
         Component[] components = tabContainer.getComponents();
-        
+
         for (Component c : components) {
-            
-            if(c instanceof DataTabItem)
-                ((DataTabItem)c).setDataTabItemSize(width, height);
+
+            if (c instanceof DataTabItem)
+                ((DataTabItem) c).setDataTabItemSize(width, height);
         }
     }
-    
+
     public void setListener(DataTabListener listener) {
         this.listener = listener;
     }
@@ -77,15 +77,14 @@ public class DataTab extends javax.swing.JPanel implements ActionListener {
 
     private void generateTabItems() {
 
-        tabContainer.setBounds(tabContainer.getBounds().x, tabContainer.getBounds().y,tabContainer.getBounds().width + 10, panel.getBounds().height);
-        
+        tabContainer.setBounds(tabContainer.getBounds().x, tabContainer.getBounds().y, tabContainer.getBounds().width + 10, panel.getBounds().height);
+
         for (Data d : data) {
 
-            DataTabItem item = new DataTabItem(d, 80, 80, this);
+            DataTabItem item = new DataTabItem(d, 100, tabContainer.getHeight() - 10, this);
             tabContainer.add(item);
             tabContainer.setSize(tabContainer.getWidth() + item.getPreferredSize().width + 10, tabContainer.getHeight());
         }
-
         this.updateUI();
     }
 
@@ -151,7 +150,7 @@ public class DataTab extends javax.swing.JPanel implements ActionListener {
         panel.setBackground(new java.awt.Color(255, 255, 255));
         panel.setLayout(null);
 
-        tabContainer.setBackground(new java.awt.Color(102, 0, 204));
+        tabContainer.setBackground(new java.awt.Color(255, 255, 255));
         tabContainer.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 5));
         panel.add(tabContainer);
         tabContainer.setBounds(0, 0, 0, 40);
@@ -171,7 +170,7 @@ public class DataTab extends javax.swing.JPanel implements ActionListener {
 
     private void resize(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_resize
 
-        tabContainer.setBounds(tabContainer.getBounds().x, tabContainer.getBounds().y,tabContainer.getBounds().width, panel.getBounds().height);
+        tabContainer.setBounds(tabContainer.getBounds().x, tabContainer.getBounds().y, tabContainer.getBounds().width, panel.getBounds().height);
         this.updateUI();
     }//GEN-LAST:event_resize
 
@@ -211,9 +210,9 @@ public class DataTab extends javax.swing.JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        
-        if(listener != null)
-            listener.selectionChanged(((DataTabItem)e.getSource()).value);
+
+        if (listener != null)
+            listener.selectionChanged(((DataTabItem) e.getSource()).value);
     }
 
 }

@@ -14,9 +14,9 @@ import com.morethansimplycode.data.DataTableInfo;
  *
  * @author Oscar
  */
-@DataDBInfo(columns = {"ID", "NOMBRE", "SUELDO", "JEFE"}, tableName = "EMPLEADOS1", primaryKey = {"ID"})
+@DataDBInfo(columns = {"ID", "NOMBRE", "SUELDO", "JEFE"}, tableName = "empleados1", primaryKey = {"ID"})
 @DataTableInfo(fields = {"NOMBRE", "SUELDO", "JEFE"}, classes = {String.class, Integer.class, String.class}, columnNames = {"NOMBRE", "SUELDO", "JEFE"})
-@DataDetailInfo(fields = {"ID", "NOMBRE", "SUELDO"})
+@DataDetailInfo(fields = {"NOMBRE", "SUELDO", "JEFE"}, namesShow = {"Nombre", "Sueldo", "Jefe"})
 public class Empleado1 extends Data {
 
     public Empleado1() {
@@ -35,6 +35,11 @@ public class Empleado1 extends Data {
     public Data copia() {
 
         return new Empleado1(this);
+    }
+
+    @Override
+    public String toString() {
+        return this.get("ID") + " - " + this.get("NOMBRE");
     }
 
 }

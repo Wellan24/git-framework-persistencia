@@ -15,7 +15,7 @@ import javax.swing.Action;
  *
  * @author Oscar Date 21-may-2015 Time 22:26:21
  */
-public class DataTabItem extends javax.swing.JPanel {
+public final class DataTabItem extends javax.swing.JPanel {
 
     Data value;
 
@@ -27,7 +27,7 @@ public class DataTabItem extends javax.swing.JPanel {
         initComponents();
     }
 
-    public DataTabItem(Data d, int height, int width, ActionListener al) {
+    public DataTabItem(Data d, int width, int height, ActionListener al) {
 
         initComponents();
         value = d;
@@ -37,7 +37,7 @@ public class DataTabItem extends javax.swing.JPanel {
             al.actionPerformed(e);
         });
         button.setText(d.toString());
-        setSize(width, height);
+        setDataTabItemSize(width, height);
     }
 
     public void setDataTabItemSize(int width, int height) {
@@ -60,7 +60,7 @@ public class DataTabItem extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.BorderLayout());
 
-        button.setBackground(new java.awt.Color(102, 102, 255));
+        button.setBackground(new java.awt.Color(255, 255, 255));
         button.setText("PACO");
         button.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
         add(button, java.awt.BorderLayout.CENTER);
