@@ -227,9 +227,10 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
      * Creates a Select Query with this format: "Select ${selectColumns} from
      * ${table} where whereColumns[i] = ${columnValue} [, ...]
      *
-     * @param selectColumns
-     * @param whereColumns
-     * @param d
+     * @param d The class to use
+     * @param selectColumns The columns to Select
+     * @param whereColumns The Columns in the where
+     * @param valuesWhereColumns The values of the Columns in the where
      * @return A String builder with the text of the query.
      */
     @Override
@@ -265,9 +266,10 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
      * ${selectColumns}) from ${table} where whereColumns[i] = ${columnValue} [,
      * ...]
      *
-     * @param selectColumns
-     * @param whereColumns
-     * @param d
+     * @param d The class to use
+     * @param selectColumns The columns to Select
+     * @param whereColumns The Columns in the where
+     * @param valuesWhereColumns The values of the Columns in the where
      * @return A String builder with the text of the query.
      */
     @Override
@@ -280,8 +282,9 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
      * Creates a Select Query with this format: "Select ${columns} from ${table}
      * where primaryKey[i] = ${columnValue} [, ...]
      *
-     * @param columns
-     * @param d
+     * @param d The class to use
+     * @param columns The columns to Select
+     * @param primaryKeyValues The values of the primary key/keys
      * @return A String builder with the text of the query.
      */
     @Override
@@ -319,8 +322,9 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
      * String.join(",",${columns}) from ${table} where primaryKey[i] =
      * ${columnValue} [, ...]
      *
-     * @param columns The columns you want to select
      * @param d The class of the data to select
+     * @param columns The columns you want to select
+     * @param primaryKeyValues The values of the primary key/keys
      * @return A String builder with the text of the query.
      */
     @Override
@@ -344,8 +348,8 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
     /**
      * Creates a Insert Query.
      *
-     * @param d
-     * @param keys
+     * @param d The class of the data to select
+     * @param keys The keys to use in the insert
      * @return An StringBuilder with the text of the Query
      */
     @Override
@@ -357,8 +361,8 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
     /**
      * Creates a Insert Query.
      *
-     * @param d
-     * @param keys
+     * @param d The class of the data to select
+     * @param keys The keys to use in the insert
      * @return An StringBuilder with the text of the Query
      */
     public StringBuilder createAutoNumericInsertQuery(Data d, String[] keys) {
@@ -370,9 +374,9 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
      * Creates a Insert Query with autonumeric key defined in DataDBInfo
      * annotation
      *
-     * @param d
-     * @param keys
-     * @param auto
+     * @param d The class of the data to select
+     * @param keys The keys to use in the insert
+     * @param auto If it have autonumeric values
      * @return An StringBuilder with the text of the Query
      */
     @Override
@@ -429,7 +433,7 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
      *
      * @param d The Data to update
      * @param connection The connection to use
-     * @return
+     * @return If the query was successfull
      */
     @Override
     public boolean updateDato(Data d, Connection connection) {
@@ -446,7 +450,7 @@ public class DataManagementDatabaseMysql implements DataManagementDatabase {
      * Creates the update Query to this Data object
      *
      * @param d The Data to update
-     * @return
+     * @return A StringBuilder with the query
      */
     @Override
     public StringBuilder createUpdateQuery(Data d) {
