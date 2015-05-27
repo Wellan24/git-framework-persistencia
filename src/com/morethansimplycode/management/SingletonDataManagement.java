@@ -281,6 +281,16 @@ public class SingletonDataManagement {
         return dataManagment.updateDato(d);
     }
 
+    /**
+     * This method close the connection of this object and clear its cache. If
+     * you want to keep the cache, use the method copyCache()
+     *
+     * @throws Exception
+     */
+    public void close() throws Exception {
+        dataManagment.close();
+    }
+
 }
 
 class DataListenerImpl implements DataListener {
