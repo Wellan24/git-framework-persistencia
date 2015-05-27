@@ -6,7 +6,9 @@
 package com.morethansimplycode.management;
 
 import com.morethansimplycode.data.Data;
+import com.morethansimplycode.data.DataAnnotationUtil;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  *
@@ -39,10 +41,29 @@ public class DataSearch {
         sql.put(key, " or " + value);
     }
 
-    public String generarConsulta(){
-        
+    public String generarConsulta() {
+
         StringBuilder dev = new StringBuilder("Select ");
-        return null;
+        String[] keys = DataAnnotationUtil.recoverDBInfoColumns(dataClass);
+        String tableName = DataAnnotationUtil.recoverDBInfoTableName(dataClass);
+
+        for (String key : keys) {
+            dev.append(key).append(",");
+        }
+
+        dev.replace(dev.length() - 1, dev.length(), " from ");
+        dev.append(tableName).append(" ");
+
+        dev.append(" where ");
+        dev.append("(");
+
+        Set<String> search = searches.keySet();
+        for (String key : keys) {
+            dev.append(key).append(" = ").append(searches.get(key)).append(" or ");
+        }
+        dev.replace(dev.length() - 1, dev.length(), ")");
+
+        return dev.toString();
     }
-    
+
 }
