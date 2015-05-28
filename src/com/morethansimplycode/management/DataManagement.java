@@ -133,6 +133,41 @@ public class DataManagement implements AutoCloseable {
     }
 
     /**
+     * Search in the Database with the specified DataSearch
+     *
+     * @param d The DataSearch to use
+     * @return An ArrayList&lt;Data&gt; with the recovered Data
+     */
+    public ArrayList<Data> searchData(DataSearch search) {
+
+        ArrayList<Data> ret = new ArrayList<>();
+        Class<? extends Data> dataClass = search.getDataClass();
+        String[] keys = DataAnnotationUtil.recoverDBInfoColumns(dataClass);
+
+        try (ResultSet rs = dataManagementDatabase.executeQuery(
+                connection, search.toString())) {
+
+            Data data;
+            while (rs.next()) {
+
+                data = dataClass.newInstance();
+                for (String key : keys) {
+                    data.put(key, rs.getObject(key));
+                }
+                ret.add(data);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DataManagement.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(DataManagement.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(DataManagement.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return ret;
+    }
+
+    /**
      * Recover an Array of Data of the given class with the given where clausule
      *
      * @param d The Data class to recover from the Table
@@ -440,5 +475,5 @@ public class DataManagement implements AutoCloseable {
     public HashMap<String, ArrayList<Data>> copyCache() {
         return dataCache.copyCache();
     }
-    
+
 }

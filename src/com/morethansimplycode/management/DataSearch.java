@@ -7,6 +7,7 @@ package com.morethansimplycode.management;
 
 import com.morethansimplycode.data.Data;
 import com.morethansimplycode.data.DataAnnotationUtil;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -16,54 +17,96 @@ import java.util.Set;
  */
 public class DataSearch {
 
-    private Class<? extends Data> dataClass;
-    private HashMap<String, String> searches;
-    private HashMap<String, String> sql;
+    private final Class<? extends Data> dataClass;
+    private final StringBuilder query;
+    boolean firstAdd;
 
     public DataSearch(Class<? extends Data> dataClass) {
 
         this.dataClass = dataClass;
-        this.searches = new HashMap<>();
-    }
-
-    public void addSearch(String key, String value) {
-
-        searches.put(key, value);
-    }
-
-    public void addAndSQL(String key, String value) {
-
-        sql.put(key, " and " + value);
-    }
-
-    public void addOrSQL(String key, String value) {
-
-        sql.put(key, " or " + value);
-    }
-
-    public String generarConsulta() {
-
-        StringBuilder dev = new StringBuilder("Select ");
+        query = new StringBuilder("Select ");
         String[] keys = DataAnnotationUtil.recoverDBInfoColumns(dataClass);
         String tableName = DataAnnotationUtil.recoverDBInfoTableName(dataClass);
 
         for (String key : keys) {
-            dev.append(key).append(",");
+            query.append(key).append(",");
         }
 
-        dev.replace(dev.length() - 1, dev.length(), " from ");
-        dev.append(tableName).append(" ");
+        query.replace(query.length() - 1, query.length(), " from ");
+        query.append(tableName).append(" ");
 
-        dev.append(" where ");
-        dev.append("(");
+        firstAdd = false;
+    }
 
-        Set<String> search = searches.keySet();
-        for (String key : keys) {
-            dev.append(key).append(" = ").append(searches.get(key)).append(" or ");
-        }
-        dev.replace(dev.length() - 1, dev.length(), ")");
+    public DataSearch addAndSearch(String key, Object value) {
 
-        return dev.toString();
+        if (firstAdd)
+            query.append(" and ");
+        else
+            query.append(" where ");
+
+        if (value instanceof String || value instanceof LocalDate)
+            query.append(key).append(" = '").append(value).append("'");
+        else
+            query.append(key).append(" = ").append(value);
+
+        query.append(" ");
+        firstAdd = true;
+        return this;
+    }
+
+    public DataSearch addOrSearch(String key, Object value) {
+
+        if (firstAdd)
+            query.append(" or ");
+        else
+            query.append(" where ");
+
+        if (value instanceof String || value instanceof LocalDate)
+            query.append(key).append(" = '").append(value).append("'");
+        else
+            query.append(key).append(" = ").append(value);
+
+        query.append(" ");
+        firstAdd = true;
+        return this;
+    }
+
+    public DataSearch addAndSQL(String where) {
+
+        if (firstAdd)
+            query.append(" and ");
+        else
+            query.append(" where ");
+
+        query.append(" ").append(where);
+
+        query.append(" ");
+        firstAdd = true;
+        return this;
+    }
+
+    public DataSearch addOrSQL(String where) {
+
+        if (firstAdd)
+            query.append(" or ");
+        else
+            query.append(" where ");
+
+        query.append(" ").append(where);
+
+        query.append(" ");
+        firstAdd = true;
+        return this;
+    }
+
+    public Class<? extends Data> getDataClass() {
+        return dataClass;
+    }
+
+    @Override
+    public String toString() {
+        return query.toString();
     }
 
 }
