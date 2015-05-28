@@ -29,14 +29,14 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
 
         SingletonDataManagement.getInstance().setDataManagment(
                 new DataManagement("com.mysql.jdbc.Driver",
-                        "jdbc:mysql://192.168.1.46:3306/test", "test", "p@ssw0rd"));
+                        "jdbc:mysql://localhost:3306/test", "test", "p@ssw0rd"));
 
         /* Ejemplo de Aync */
 //        SingletonDataManagement.getInstance().addDataListener(this);
 //        SingletonDataManagement.getInstance().recoveryDataAsync(Empleado1.class);
-
+        
         /* Ejemplo búsqueda */
-        DataSearch s = new DataSearch(Empleado1.class);
+        DataSearch s = new DataSearch(Empleado.class);
 //        s.addAndSearch("NOMBRE", "pepe");
 //        s.addOrSearch("NOMBRE", "paco");
         ArrayList<Data> ds = SingletonDataManagement.getInstance().searchData(s);
@@ -44,8 +44,8 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
 //        ArrayList<Data> ds = SingletonDataManagement.getInstance().recoverData(Empleado1.class);
 
         // Añadir un modelo
-        tabla.setModel(new DataTableModel(Empleado1.class, ds));
-        tabDetail.setClassData(Empleado1.class);
+        tabla.setModel(new DataTableModel(Empleado.class, ds));
+        tabDetail.setClassData(Empleado.class);
         tabDetail.setData(ds);
         
         // Añadir un Listener para mostrar los datos seleccionados en la tabla 
