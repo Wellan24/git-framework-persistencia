@@ -294,7 +294,7 @@ public class SingletonDataManagement {
     /**
      * Search in the Database with the specified DataSearch
      *
-     * @param d The DataSearch to use
+     * @param search The DataSearch to use
      * @return An ArrayList&lt;Data&gt; with the recovered Data
      */
     public ArrayList<Data> searchData(DataSearch search) {
