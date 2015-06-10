@@ -459,8 +459,11 @@ public class DataManagement implements AutoCloseable {
     @Override
     public void close() throws Exception {
 
-        this.dataCache.clearCache();
-        this.connection.close();
+        if(dataCache != null)
+            this.dataCache.clearCache();
+        
+        if(connection != null)
+            this.connection.close();
 
         this.dataManagementDatabase = null;
         this.dataCache = null;
