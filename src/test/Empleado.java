@@ -9,6 +9,7 @@ import com.morethansimplycode.data.Data;
 import com.morethansimplycode.data.DataDBInfo;
 import com.morethansimplycode.data.DataDetailInfo;
 import com.morethansimplycode.data.DataTableInfo;
+import com.morethansimplycode.formatting.Formattable;
 
 /**
  *
@@ -20,7 +21,7 @@ import com.morethansimplycode.data.DataTableInfo;
         classes = {Integer.class, String.class, Integer.class},
         columnNames = {"Nº de Empleado", "Nombre", "Sueldo"})
 @DataDetailInfo(fields = {"NOMBRE", "SUELDO"}, namesShow = {"Nombre", "Sueldo"})
-public class Empleado extends Data {
+public class Empleado extends Data implements Formattable{
 
     public Empleado() {
         super(3);
@@ -44,6 +45,12 @@ public class Empleado extends Data {
     public String toString() {
         
         return this.get("ID") + " - " + this.get("NOMBRE");
+    }
+
+    @Override
+    public String toString(String format) {
+        
+        return "";
     }
 
 }

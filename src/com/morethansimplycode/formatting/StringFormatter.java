@@ -184,6 +184,7 @@ public class StringFormatter {
         return this;
     }
 
+    @Override
     public String toString() {
         return stringBuilder.toString();
     }
@@ -248,6 +249,7 @@ public class StringFormatter {
         return stringBuilder.substring(start, end);
     }
 
+    // TODO Añadir un método static que aproveche esta funcionalidad
     public StringFormatter appendFormat(String format, Object... args) {
 
         if (format == null || args == null)
