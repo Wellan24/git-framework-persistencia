@@ -11,6 +11,7 @@ package com.morethansimplycode.formatting;
  */
 public interface Formattable {
 
-    // TODO Añadir un método que pida también un formatter
     public String toString(String format);
+
+    public String toString(CustomFormatter formatter, String format);
 }

@@ -23,7 +23,7 @@ public class PruebaString {
     public static void main(String[] args) {
 
         try {
-            System.out.println(new StringFormatter().appendFormat("Voy a saludar: {0,10}, {1} y este es el objeto: {2:K N}", "hola", "pepe", new Pruebas("clave", "valor", "number")));
+            System.out.println(new StringFormatter().appendFormat("Voy a saludar: {0,-10}, {1} y este es el objeto: {2:K N}", "hola", "pepe", new Pruebas("clave", "valor", "number")));
         } catch (Exception ex) {
             Logger.getLogger(PruebaString.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -43,15 +43,24 @@ class Pruebas implements Formattable {
     }
 
     @Override
+    public String toString() {
+
+        return "Esto es una prueba " + this.key;
+    }
+
+    @Override
     public String toString(String format) {
 
         return PruebasFormatter.getInstance().format(format, this);
     }
 
     @Override
-    public String toString() {
+    public String toString(CustomFormatter formatter, String format) {
 
-        return "Esto es una prueba " + this.key;
+        if (formatter != null)
+            return formatter.format(format, this);
+        else
+            return this.toString(format);
     }
 }
 

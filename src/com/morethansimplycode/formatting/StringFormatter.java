@@ -250,10 +250,10 @@ public class StringFormatter {
     }
 
     // TODO Añadir un método static que aproveche esta funcionalidad
-    public StringFormatter appendFormat(String format, Object... args) {
+    public StringFormatter appendFormat(String format, Object... args) throws StringFormatterException {
 
         if (format == null || args == null)
-            throw new NullPointerException((format == null) ? "format" : "args");
+            throw new StringFormatterException((format == null) ? "format" : "args");
 
         int pos = 0;
         int len = format.length();
@@ -414,19 +414,13 @@ public class StringFormatter {
 
             int pad = width - s.length();
 
-            if (!leftJustify && pad > 0)
-                append(' ', pad);
-
-            append(s);
-
-            if (leftJustify && pad > 0)
-                append(' ', pad);
+            appendWithPad(s, leftJustify, pad);
         }
 
         return this;
     }
 
-    public StringFormatter append(char value, int repeatCount) throws Exception {
+    public StringFormatter append(char value, int repeatCount) throws StringFormatterException {
 
         if (repeatCount < 0)
             formatError();
@@ -443,7 +437,25 @@ public class StringFormatter {
         return this;
     }
 
-    private static void formatError() throws Exception {
-        throw new Exception("Format error");
+    public StringFormatter appendWithPad(String value, boolean isLeftJustified, int pad) throws StringFormatterException {
+
+        if (!isLeftJustified && pad > 0)
+            append(' ', pad);
+
+        append(value);
+
+        if (isLeftJustified && pad > 0)
+            append(' ', pad);
+
+        return this;
+    }
+
+    public String format(String format, Object... args) throws StringFormatterException {
+
+        return new StringFormatter().appendFormat(format, args).toString();
+    }
+
+    private static void formatError() throws StringFormatterException {
+        throw new StringFormatterException("Error formatting the given string in StringFormatter");
     }
 }
