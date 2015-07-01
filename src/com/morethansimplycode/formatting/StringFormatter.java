@@ -248,7 +248,7 @@ public class StringFormatter {
         return stringBuilder.substring(start, end);
     }
 
-    public StringFormatter appendFormat(String format, Object... args) {
+    public StringFormatter appendFormat(String format, Object... args) throws Exception {
 
         if (format == null || args == null)
             throw new NullPointerException((format == null) ? "format" : "args");
@@ -424,16 +424,24 @@ public class StringFormatter {
         return this;
     }
 
-    public StringFormatter append(char value, int repeatCount) {
+    public StringFormatter append(char value, int repeatCount) throws Exception {
 
         if (repeatCount < 0)
             formatError();
 
-        ensureCapacity(stringBuilder.length() + 1);
+        if (repeatCount == 0)
+            return this;
+
+        for (int i = repeatCount; i > 0; i--) {
+
+            ensureCapacity(stringBuilder.length() + 1);
+            stringBuilder.append(' ');
+        }
+
         return this;
     }
 
-    private static void formatError() {
-
+    private static void formatError() throws Exception {
+        throw new Exception("Format error");
     }
 }

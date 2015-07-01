@@ -8,6 +8,8 @@ package test;
 import com.morethansimplycode.formatting.Formattable;
 import com.morethansimplycode.formatting.CustomFormatter;
 import com.morethansimplycode.formatting.StringFormatter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -20,7 +22,11 @@ public class PruebaString {
      */
     public static void main(String[] args) {
 
-        System.out.println(new StringFormatter().appendFormat("{0} {1} {2:K V N}", "hola", "pepe", new Pruebas("clave", "valor", "number")));
+        try {
+            System.out.println(new StringFormatter().appendFormat("Voy a saludar: {0,10}, {1} y este es el objeto: {2:K N}", "hola", "pepe", new Pruebas("clave", "valor", "number")));
+        } catch (Exception ex) {
+            Logger.getLogger(PruebaString.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
 
