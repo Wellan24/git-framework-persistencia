@@ -23,7 +23,7 @@ public class PruebaString {
     public static void main(String[] args) {
 
         try {
-            System.out.println(new StringFormatter().appendFormat("Voy a saludar: {0,-10}, {1} y este es el objeto: {2:K N}", "hola", "pepe", new Pruebas("clave", "valor", "number")));
+            System.out.println(StringFormatter.format("Voy a saludar: {0,-10}, {1} y este es el objeto: {2:K N}", "hola", "pepe", new Pruebas("clave", "valor", "number")));
         } catch (Exception ex) {
             Logger.getLogger(PruebaString.class.getName()).log(Level.SEVERE, null, ex);
         }

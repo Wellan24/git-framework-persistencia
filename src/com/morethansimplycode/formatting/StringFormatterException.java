@@ -9,7 +9,7 @@ package com.morethansimplycode.formatting;
  *
  * @author Oscar
  */
-public class StringFormatterException extends Exception{
+public class StringFormatterException extends RuntimeException{
 
     public StringFormatterException() {
     }

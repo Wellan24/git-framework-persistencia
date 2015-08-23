@@ -450,7 +450,7 @@ public class StringFormatter {
         return this;
     }
 
-    public String format(String format, Object... args) throws StringFormatterException {
+    public static String format(String format, Object... args) throws StringFormatterException {
 
         return new StringFormatter().appendFormat(format, args).toString();
     }
