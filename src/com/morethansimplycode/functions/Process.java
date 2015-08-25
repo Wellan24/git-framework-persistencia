@@ -6,10 +6,17 @@
 package com.morethansimplycode.functions;
 
 /**
+ * Functional interface to process and Object.
  *
  * @author Oscar
  */
-public interface Process {    
+public interface Process {   
     
+    /**
+     * This method process an Object..
+     *
+     * @param toProcess The Object to process
+     * @return The result of process the Object to process.
+     */
     public Object execute(Object toProcess);
 }

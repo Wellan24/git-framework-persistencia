@@ -6,10 +6,17 @@
 package com.morethansimplycode.functions;
 
 /**
- *
+ * Functional interface to check a condition in an Object.
+ * 
  * @author Oscar
  */
 public interface Checkout {
-    
+    /**
+     * 
+     * This method checks if the given Object meets a condition.
+     *
+     * @param toCheck The Object to check
+     * @return True if the Object to check if it meets a condition.
+     */
     public boolean check(Object toCheck);
 }
