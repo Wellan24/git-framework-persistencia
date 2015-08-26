@@ -19,6 +19,7 @@ public interface DataProcessor {
      * Process a Data and return if the Data is valid to add it to the result
      *
      * @param d The Data to Process
+     * @return 
      */
     public boolean process(Data d);
 
