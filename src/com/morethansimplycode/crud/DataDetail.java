@@ -36,6 +36,7 @@ public class DataDetail extends javax.swing.JPanel {
         String[] fields = DataAnnotationUtil.recoverDetailInfoFields(d);
         String[] names = DataAnnotationUtil.recoverDetailInfoNamesShow(d);
 
+        this.removeAll();
         layout = new GridLayout(fields.length, 2, 10, 10);
         this.setLayout(layout);
 

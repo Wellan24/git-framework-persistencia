@@ -454,20 +454,25 @@ public class DataManagement implements AutoCloseable {
      * This method close the connection of this object and clear its cache. If
      * you want to keep the cache, use the method copyCache()
      *
-     * @throws Exception
      */
     @Override
-    public void close() throws Exception {
+    public void close() {
 
-        if(dataCache != null)
-            this.dataCache.clearCache();
-        
-        if(connection != null)
-            this.connection.close();
+        try {
 
-        this.dataManagementDatabase = null;
-        this.dataCache = null;
-        this.connection = null;
+            if (dataCache != null)
+                this.dataCache.clearCache();
+
+            if (connection != null)
+                this.connection.close();
+
+            this.dataManagementDatabase = null;
+            this.dataCache = null;
+            this.connection = null;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DataManagement.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

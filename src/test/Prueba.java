@@ -10,8 +10,6 @@ import com.morethansimplycode.crud.DataTableModel;
 import com.morethansimplycode.management.DataListener;
 import com.morethansimplycode.management.DataManagement;
 import com.morethansimplycode.management.DataProcessor;
-import com.morethansimplycode.management.DataSearch;
-import com.morethansimplycode.management.SingletonDataManagement;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,19 +27,19 @@ public class Prueba extends javax.swing.JFrame implements DataListener {
     public Prueba() {
         try {
             initComponents();
-            
+
 //        SingletonDataManagement.getInstance().setDataManagment(
 //                new DataManagement("com.mysql.jdbc.Driver",
 //                        "jdbc:mysql://192.168.1.46:3306/test", "test", "p@ssw0rd"));
             DataManagement conexion = new DataManagement("com.mysql.jdbc.Driver",
                     "jdbc:mysql://192.168.1.46:3306/test", "test", "p@ssw0rd");
             conexion.close();
-            
+
             ArrayList<Data> ds = conexion.recoverData(Empleado1.class);
             tabla.setModel(new DataTableModel(Empleado1.class, ds));
             tabDetail.setClassData(Empleado1.class);
             tabDetail.setData(ds);
-            
+
             /* Ejemplo de Aync */
 //        SingletonDataManagement.getInstance().addDataListener(this);
 //        SingletonDataManagement.getInstance().recoveryDataAsync(Empleado1.class);

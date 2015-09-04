@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 public class DataManagementDatabaseOracle implements DataManagementDatabase {
 
     public int top = -1;
-    private static DataManagementDatabaseMysql instance;
+    private static DataManagementDatabaseOracle instance;
     private Statement statement;
 
     /**
@@ -38,7 +38,7 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
     public static DataManagementDatabase getInstance() {
 
         if (instance == null) {
-            instance = new DataManagementDatabaseMysql();
+            instance = new DataManagementDatabaseOracle();
         }
 
         return instance;
@@ -78,7 +78,7 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
 
         try {
             statement = connection.createStatement();
-            statement.closeOnCompletion();
+            //statement.closeOnCompletion();
             System.out.println(query);
             return statement.executeQuery(query);
 
@@ -102,8 +102,7 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
     public boolean insertData(Connection connection, Data d, boolean autoNum) {
 
         StringBuilder text = createInsertQuery(d, DataAnnotationUtil.recoverDBInfoColumns(d.getClass()));
-        executeNonQuery(connection, text.toString());
-        return existsByPrimaryKey(connection, d);
+        return executeNonQuery(connection, text.toString()) != -1;
     }
 
     /**
@@ -126,8 +125,7 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
                 values[i] = d.get(primaryKeys[i]);
             }
 
-            createSelectQueryByPrimaryKey(d.getClass(), "true", values);
-            ResultSet rs = localStatement.executeQuery("");
+            ResultSet rs = localStatement.executeQuery(createSelectQueryByPrimaryKey(d.getClass(), "1", values).toString());
             return rs.next();
 
         } catch (SQLException ex) {
@@ -171,7 +169,7 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
                 values[i] = d.get(columns[i]);
             }
 
-            ResultSet rs = localStatement.executeQuery(createSelectQueryByColumns(d.getClass(), "true", columns, values).toString());
+            ResultSet rs = localStatement.executeQuery(createSelectQueryByColumns(d.getClass(), "1", columns, values).toString());
             return rs.next();
 
         } catch (SQLException ex) {
@@ -308,12 +306,11 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
             }
 
             if (i != primaryKeys.length - 1) {
-                text.append(",");
+                text.append(" and ");
             }
         }
 
         addTop(text);
-
         return text;
     }
 
@@ -420,8 +417,8 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
                 textoSentencia.append(" ,");
             }
         }
-        textoSentencia.replace(textoSentencia.length() - 2, textoSentencia.length(), ");");
-
+        textoSentencia.replace(textoSentencia.length() - 2, textoSentencia.length(), ")");
+        System.out.println(textoSentencia.toString());
         return textoSentencia;
     }
 
@@ -481,6 +478,7 @@ public class DataManagementDatabaseOracle implements DataManagementDatabase {
 
         textoSentencia.replace(textoSentencia.length() - 2, textoSentencia.length(), " where ");
         textoSentencia.append(claves[0]).append(" = ").append(d.get(claves[0]));
+        System.out.println(textoSentencia);
         return textoSentencia;
     }
 

@@ -58,6 +58,7 @@ public class DataTab extends javax.swing.JPanel implements ActionListener {
         }
     }
 
+    // TODO Actualizar Tab con lo de C#
     public void setListener(DataTabListener listener) {
         this.listener = listener;
     }
@@ -80,6 +81,8 @@ public class DataTab extends javax.swing.JPanel implements ActionListener {
 
     private void generateTabItems() {
 
+        tabContainer.removeAll();
+        tabContainer.setSize(0, tabContainer.getHeight());
         tabContainer.setBounds(tabContainer.getBounds().x, tabContainer.getBounds().y, tabContainer.getBounds().width + 10, panel.getBounds().height);
 
         for (Data d : data) {

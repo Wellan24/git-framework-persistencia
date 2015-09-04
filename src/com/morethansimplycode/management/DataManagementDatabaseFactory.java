@@ -15,6 +15,7 @@ public class DataManagementDatabaseFactory {
 
         switch (name) {
             case "oracle":
+            case "Oracle":
                 return DataManagementDatabaseOracle.getInstance();
             case "MySQL":
                 return DataManagementDatabaseMysql.getInstance();

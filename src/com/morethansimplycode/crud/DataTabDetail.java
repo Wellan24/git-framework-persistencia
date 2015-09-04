@@ -36,6 +36,7 @@ public class DataTabDetail extends javax.swing.JPanel implements DataTabListener
     }
 
     public void setSelectedData(Data data) {
+        // TODO tab.setSelectedData();
         detail.setData(data);
     }
 

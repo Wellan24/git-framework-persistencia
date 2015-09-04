@@ -27,5 +27,5 @@ public abstract class Data extends HashMap<String, Object> {
      * @return
      */
     public abstract Data copia();
-
+    // TODO Add the method add returning it self to chain calls
 }
