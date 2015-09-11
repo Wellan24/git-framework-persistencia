@@ -204,7 +204,7 @@ public class DataManagement implements AutoCloseable {
         ArrayList<Data> ret = new ArrayList<>();
         String[] keys = DataAnnotationUtil.recoverDBInfoColumns(d);
         String tableName = DataAnnotationUtil.recoverDBInfoTableName(d);
-
+        
         try (ResultSet rs = dataManagementDatabase.executeQuery(connection,
                 dataManagementDatabase.top(top).createSelectQuery(keys, tableName, where).toString())) {
 
@@ -229,7 +229,7 @@ public class DataManagement implements AutoCloseable {
             if (p != null) {
                 p.commit();
             }
-
+            
             top = -1;
             return ret;
         } catch (SQLException | InstantiationException | IllegalAccessException ex) {
