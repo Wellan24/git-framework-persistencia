@@ -17,6 +17,7 @@ import java.util.List;
  */
 public class Processor {
 
+    private Action.$1<Boolean> checker1;
     private Checkout checker;
     private Process process;
     public int weigth;
