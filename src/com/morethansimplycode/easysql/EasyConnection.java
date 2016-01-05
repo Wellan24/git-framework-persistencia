@@ -50,7 +50,7 @@ public class EasyConnection implements AutoCloseable {
         ExecuteEasyQuery(actionPerRecord, query);
     }
 
-    public Boolean ExecuteEasyNonQuery(Consumer<ResultSet> actionPerRecord, String query) {
+    public Boolean ExecuteEasyNonQuery(String query) {
 
         try {
 
@@ -71,10 +71,10 @@ public class EasyConnection implements AutoCloseable {
         return false;
     }
 
-    public void ExecuteEasyNonQuery(Consumer<ResultSet> actionPerRecord, String query, String... args) throws SQLException {
+    public void ExecuteEasyNonQuery(String query, String... args) throws SQLException {
 
         query = StringFormatter.format(query, (Object[]) args);
-        ExecuteEasyQuery(actionPerRecord, query);
+        ExecuteEasyNonQuery(query);
     }
 
     /**
